@@ -1,0 +1,23 @@
+---
+Name: shopapiextensions
+After: 'framework/*','cms/*'
+---
+Product:
+  extensions:
+    - ShopAPIProductExtension
+
+ProductVariation:
+  extensions:
+    - ShopAPIVariationExtension
+
+OrderItem:
+  extensions:
+    - ShopAPIOrderItemExtension
+
+SiteTree:
+  extensions:
+    - ShopAPISiteTreeExtension
+
+Order:
+  extensions:
+    - ShopAPIOrderExtension

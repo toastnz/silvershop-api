@@ -1,0 +1,7 @@
+---
+Name: shopapiroutes
+After: framework/routes#coreroutes
+---
+Director:
+  rules:
+    'shop-api' : 'ShopAPIController'
