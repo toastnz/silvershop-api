@@ -68,11 +68,11 @@ abstract class ShopModelBase extends Object
 
     public function getSiteCurrency()
     {
-        return self::singleton('ShopAPIConfig')->getSiteCurrency();
+        return singleton('ShopAPIConfig')->getSiteCurrency();
     }
 
     public function getSiteCurrencySymbol()
     {
-        return self::singleton('ShopAPIConfig')->getSiteCurrencySymbol();
+        return singleton('ShopAPIConfig')->getSiteCurrencySymbol();
     }
 }
