@@ -210,7 +210,20 @@ class CartItemModel extends ShopModelBase
             }
 
             if ($result === true || $result instanceof OrderItem) {
-                $this->code         = 'success';
+                $this->code = 'success';
+                if ($add) {
+                    $this->message = _t(
+                        'SHOP_API_MESSAGES.ItemAdded',
+                        'Item{plural} added successfully.',
+                        ['plural' => $quantity == 1 ? '' : 's']
+                    );
+                } else {
+                    $this->message = _t(
+                        'SHOP_API_MESSAGES.ItemRemoved',
+                        'Item{plural} removed from cart.',
+                        ['plural' => $quantity == 1 ? '' : 's']
+                    );
+                }
                 $this->message      = $this->cart->getMessage();
                 $this->cart_updated = true;
                 $this->total_items  = $this->order ? $this->order->Items()->Quantity() : $quantity;

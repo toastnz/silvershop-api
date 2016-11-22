@@ -1,0 +1,11 @@
+en:
+  SHOP_API_MESSAGES:
+    QuantityMissing: 'Quantity missing or not a number'
+    ProductNotFound: 'Product does not exist'
+    IncorrectIDParam: 'Missing or malformed ID'
+    VariationNotAvailable: 'That variation is not available'
+    IncorrectProductAttributesFormat: 'Missing [ProductAttributes] GET variable in correct format'
+    CartCleared: 'Cart cleared'
+    CartAlreadyEmpty: 'Cart already empty'
+    ItemAdded: 'Item{plural} added successfully.'
+    ItemRemoved: 'Item{plural} removed from cart.'

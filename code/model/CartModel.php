@@ -88,7 +88,11 @@ class CartModel extends ShopModelBase
 
                 if ($result === true || $result instanceof OrderItem) {
                     $this->code         = 'success';
-                    $this->message      = $this->cart->getMessage();
+                    $this->message      = _t(
+                        'SHOP_API_MESSAGES.ItemAdded',
+                        'Item{plural} added successfully.',
+                        ['plural' => $quantity == 1 ? '' : 's']
+                    );
                     $this->cart_updated = true;
                     // Set new total items
                     $this->total_items = $result instanceof OrderItem ? $result->Order()->Items()->Quantity() : $quantity;
@@ -145,7 +149,11 @@ class CartModel extends ShopModelBase
 
                     if ($result === true || $result instanceof OrderItem) {
                         $this->code         = 'success';
-                        $this->message      = $this->cart->getMessage();
+                        $this->message      = _t(
+                            'SHOP_API_MESSAGES.ItemAdded',
+                            'Item{plural} added successfully.',
+                            ['plural' => $quantity == 1 ? '' : 's']
+                        );
                         $this->cart_updated = true;
                     } else {
                         $this->code         = 'error';
