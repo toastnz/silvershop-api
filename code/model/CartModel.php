@@ -26,6 +26,7 @@ class CartModel extends ShopModelBase
         'total_price_nice',
         'cart_link',
         'checkout_link',
+        'continue_link',
         'items'
     ];
 

@@ -19,6 +19,7 @@ abstract class ShopModelBase extends Object
     protected $currency_symbol;
     protected $cart_link;
     protected $checkout_link;
+    protected $continue_link;
 
     protected static $fields = [];
 
@@ -39,6 +40,12 @@ abstract class ShopModelBase extends Object
             // Set links
             $this->cart_link     = Controller::join_links(Director::absoluteBaseURL(), CartPage::find_link());
             $this->checkout_link = Controller::join_links(Director::absoluteBaseURL(), CheckoutPage::find_link());
+            // This means
+            if ($cartPage = SiteTree::get_one('CartPage')) {
+                if ($continue = $cartPage->ContinuePage()) {
+                    $this->continue_link = $continue->AbsoluteLink();
+                }
+            }
         } else {
             user_error('Missing Silvershop module', E_USER_WARNING);
         }
