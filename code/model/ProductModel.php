@@ -82,7 +82,9 @@ class ProductModel extends ShopModelBase
                 }
 
                 // Set the image
-                $this->product_image = ImageModel::create($this->buyable->ImageID)->get();
+                if ($this->buyable->Image()) {
+                    $this->product_image = ImageModel::create($this->buyable->Image()->ID)->get();
+                }
 
                 // Set the categories
                 if ($this->buyable->ParentID) {
