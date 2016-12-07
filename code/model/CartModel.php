@@ -13,6 +13,7 @@ class CartModel extends ShopModelBase
     protected $cart_link;
     protected $checkout_link;
     protected $items = [];
+    protected $modifiers = [];
 
     protected static $fields = [
         'code',
@@ -27,7 +28,8 @@ class CartModel extends ShopModelBase
         'cart_link',
         'checkout_link',
         'continue_link',
-        'items'
+        'items',
+        'modifiers'
     ];
 
     public function __construct()
@@ -48,6 +50,15 @@ class CartModel extends ShopModelBase
             if ($this->order->Items()) {
                 foreach ($this->order->Items() as $item) {
                     $this->items[] = CartItemModel::create($item->ID)->get();
+                }
+            }
+
+            // Add modifiers
+            if ($this->order->Modifiers()) {
+                foreach ($this->order->Modifiers() as $modifier) {
+                    if ($modifier->ShowInTable()) {
+                        $this->modifiers[] = ModifierModel::create($modifier->ID)->get();
+                    }
                 }
             }
         } else {
