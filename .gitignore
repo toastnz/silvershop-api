@@ -9,3 +9,10 @@
 /vendor/
 /siteconfig/
 /reports/
+/docs
+/email-helpers
+/listsorter
+/omnipay
+/silvershop
+/sqlquerylist
+/versioned-gridfield

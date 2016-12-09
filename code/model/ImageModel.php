@@ -29,46 +29,45 @@ class ImageModel extends ShopModelBase
                 // Set the initial properties
                 $this->image_id = $this->image->ID;
                 $this->alt      = $this->image->Title;
-
-                $this->sizes = [
-                    'small' => [
-                        'src' => $this->image->Fill(640, 360)->getAbsoluteURL(),
-                        'width' => 640,
-                        'height' => 360
-                    ],
-                    'medium' => [
-                        'src' => $this->image->Fill(320, 210)->getAbsoluteURL(),
-                        'width' => 320,
-                        'height' => 210
-                    ],
-                    'large' => [
-                        'src' => $this->image->Fill(160, 90)->getAbsoluteURL(),
-                        'width' => 160,
-                        'height' => 90
-                    ],
-                ];
             }
         } else {
             $this->image_id = 0;
             $this->alt      = 'Placeholder';
-            // Placeholders
-            $this->sizes = [
-                'small' => [
-                    'src' => 'http://placehold.it/640x360',
-                    'width' => 640,
-                    'height' => 360
-                ],
-                'medium' => [
-                    'src' => 'http://placehold.it/320x210',
-                    'width' => 320,
-                    'height' => 210
-                ],
-                'large' => [
-                    'src' => 'http://placehold.it/160x90',
-                    'width' => 160,
-                    'height' => 90
-                ],
-            ];
         }
+
+        $this->sizes = $this->getImageSizes();
+    }
+
+    /**
+     * Based on config, return an array of image sizes
+     *
+     * @return array
+     */
+    public function getImageSizes()
+    {
+        $sizes = self::config()->get('image_sizes');
+
+        $images = [];
+
+        foreach ($sizes as $size => $d) {
+            if (isset($d['width']) && isset($d['height'])) {
+
+                if ($this->image && $this->image->exists()) {
+                    $images[$size] = [
+                        'src' => $this->image->Fill($d['width'], $d['height'])->getAbsoluteURL(),
+                        'width' => $d['width'],
+                        'height' => $d['height']
+                    ];
+                } else {
+                    $images[$size] = [
+                        'src' => sprintf('http://placehold.it/%sx%s', $d['width'], $d['height']),
+                        'width' => $d['width'],
+                        'height' => $d['height']
+                    ];
+                }
+            }
+        }
+
+        return $images;
     }
 }

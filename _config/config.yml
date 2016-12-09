@@ -2,3 +2,14 @@
 Name: shopapiconfig
 After: 'framework/*','cms/*'
 ---
+ImageModel:
+  image_sizes:
+    small:
+      width: 160
+      height: 90
+    medium:
+      width: 320
+      height: 210
+    large:
+      width: 640
+      height: 360
