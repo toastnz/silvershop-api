@@ -32,17 +32,17 @@ class ImageModel extends ShopModelBase
 
                 $this->sizes = [
                     'small' => [
-                        'src' => $this->image->CroppedImage(640, 360)->getAbsoluteURL(),
+                        'src' => $this->image->Fill(640, 360)->getAbsoluteURL(),
                         'width' => 640,
                         'height' => 360
                     ],
                     'medium' => [
-                        'src' => $this->image->CroppedImage(320, 210)->getAbsoluteURL(),
+                        'src' => $this->image->Fill(320, 210)->getAbsoluteURL(),
                         'width' => 320,
                         'height' => 210
                     ],
                     'large' => [
-                        'src' => $this->image->CroppedImage(160, 90)->getAbsoluteURL(),
+                        'src' => $this->image->Fill(160, 90)->getAbsoluteURL(),
                         'width' => 160,
                         'height' => 90
                     ],

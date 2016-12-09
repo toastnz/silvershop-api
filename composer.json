@@ -24,8 +24,8 @@
     ],
     "require": {
         "composer/installers": "*",
-        "silverstripe/cms": "~3.1",
-        "silverstripe/framework": "~3.1",
+        "silverstripe/cms": "~3.2",
+        "silverstripe/framework": "~3.2",
         "silvershop/core": "~2.1.0"
     },
     "require-dev": {
