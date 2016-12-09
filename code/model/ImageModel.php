@@ -47,28 +47,28 @@ class ImageModel extends ShopModelBase
                         'height' => 90
                     ],
                 ];
-            } else {
-                $this->image_id = 0;
-                $this->alt      = 'Placeholder';
-                // Placeholders
-                $this->sizes = [
-                    'small' => [
-                        'src' => 'http://placehold.it/640x360',
-                        'width' => 640,
-                        'height' => 360
-                    ],
-                    'medium' => [
-                        'src' => 'http://placehold.it/320x210',
-                        'width' => 320,
-                        'height' => 210
-                    ],
-                    'large' => [
-                        'src' => 'http://placehold.it/160x90',
-                        'width' => 160,
-                        'height' => 90
-                    ],
-                ];
             }
+        } else {
+            $this->image_id = 0;
+            $this->alt      = 'Placeholder';
+            // Placeholders
+            $this->sizes = [
+                'small' => [
+                    'src' => 'http://placehold.it/640x360',
+                    'width' => 640,
+                    'height' => 360
+                ],
+                'medium' => [
+                    'src' => 'http://placehold.it/320x210',
+                    'width' => 320,
+                    'height' => 210
+                ],
+                'large' => [
+                    'src' => 'http://placehold.it/160x90',
+                    'width' => 160,
+                    'height' => 90
+                ],
+            ];
         }
     }
 }
