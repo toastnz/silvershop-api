@@ -1,6 +1,5 @@
 ---
 Name: shopapiconfig
-After: 'framework/*','cms/*'
 ---
 ImageModel:
   image_sizes:

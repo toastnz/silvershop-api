@@ -1,6 +1,5 @@
 ---
 Name: shopapiextensions
-After: 'framework/*','cms/*'
 ---
 Product:
   extensions:
