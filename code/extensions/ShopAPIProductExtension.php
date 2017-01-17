@@ -63,4 +63,9 @@ class ShopAPIOrderItemExtension extends DataExtension
     {
         return Controller::join_links(ShopAPIConfig::getApiUrl(), 'item', $this->owner->ID, 'removeAll');
     }
+
+    public function getSetQuantity()
+    {
+        return Controller::join_links(ShopAPIConfig::getApiUrl(), 'item', $this->owner->ID, 'setQuantity');
+    }
 }
