@@ -20,6 +20,7 @@ class ShopAPIController extends Controller
         'product',
         'clear',
         'component',
+        'promocode',
         'ping'
     ];
 
@@ -41,6 +42,27 @@ class ShopAPIController extends Controller
 
     public function index(SS_HTTPRequest $request)
     {
+        return $this->processResponse($this->cart->get());
+    }
+
+    /**
+     * @param SS_HTTPRequest $request
+     * @return string
+     */
+    public function promocode(SS_HTTPRequest $request)
+    {
+        /** =========================================
+         * @var OrderCoupon $coupon
+         * ========================================*/
+
+        if (Product::has_extension('ProductDiscountExtension')) {
+            $code = $request->param('ID');
+
+            if ($code) {
+                return $this->processResponse($this->cart->applyCoupon($code));
+            }
+        }
+
         return $this->processResponse($this->cart->get());
     }
 
@@ -79,6 +101,12 @@ class ShopAPIController extends Controller
         return $this->processResponse();
     }
 
+    /**
+     * @param SS_HTTPRequest $request
+     * @return string
+     *
+     * Checkout component model
+     */
     public function component(SS_HTTPRequest $request)
     {
         $type = $request->param('ID');
@@ -88,6 +116,8 @@ class ShopAPIController extends Controller
 
             return $this->processResponse($component->get());
         }
+
+        return $this->processResponse($this->cart->get());
     }
 
     /**

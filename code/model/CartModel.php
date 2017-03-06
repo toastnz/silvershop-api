@@ -192,6 +192,35 @@ class CartModel extends ShopModelBase
         return $this->getActionResponse();
     }
 
+    public function applyCoupon($code)
+    {
+        /** =========================================
+         * @var OrderCoupon $coupon
+         * ========================================*/
+
+        if ($coupon = OrderCoupon::get_by_code($code)) {
+            if (!$coupon->validateOrder($this->order, ["CouponCode" => $code])) {
+                $this->code         = 'error';
+                $this->message      = _t('SHOP_API_MESSAGES.CouponInvalid', 'Could not apply coupon.');
+                $this->cart_updated = false;
+            } else {
+                Session::set("cart.couponcode", strtoupper($code));
+
+                $this->order->getModifier("OrderDiscountModifier", true);
+
+                $this->code         = 'success';
+                $this->message      = _t('SHOP_API_MESSAGES.CouponApplied', 'Coupon applied.');
+                $this->cart_updated = true;
+            }
+        } else {
+            $this->code         = 'error';
+            $this->message      = _t('SHOP_API_MESSAGES.CouponNotFound', 'Coupon could not be found');
+            $this->cart_updated = false;
+        }
+
+        return $this->getActionResponse();
+    }
+
     /**
      * Remove all items from the cart
      *
