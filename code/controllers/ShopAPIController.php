@@ -19,6 +19,7 @@ class ShopAPIController extends Controller
         'item',
         'product',
         'clear',
+        'component',
         'ping'
     ];
 
@@ -78,6 +79,17 @@ class ShopAPIController extends Controller
         return $this->processResponse();
     }
 
+    public function component(SS_HTTPRequest $request)
+    {
+        $type = $request->param('ID');
+
+        if ($type) {
+            $component = ComponentModel::create($type);
+
+            return $this->processResponse($component->get());
+        }
+    }
+
     /**
      * Controls Product functions (get, add to cart)
      *
@@ -130,6 +142,6 @@ class ShopAPIController extends Controller
             ShoppingCart::curr()->write();
         }
 
-        return json_encode($data);
+        return json_encode($data, JSON_HEX_QUOT | JSON_HEX_TAG);
     }
 }
