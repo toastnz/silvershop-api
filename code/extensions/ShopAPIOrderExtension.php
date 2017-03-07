@@ -10,4 +10,9 @@ class ShopAPIOrderExtension extends DataExtension
     private static $db = [
         'Hash' => 'Varchar(256)'
     ];
+
+    public function getShopApiUrl()
+    {
+        return ShopAPIConfig::getApiUrl();
+    }
 }
