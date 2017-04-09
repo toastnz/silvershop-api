@@ -38,8 +38,17 @@ abstract class ShopModelBase extends Object
             $this->cart  = ShoppingCart::singleton();
 
             // Set links
-            $this->cart_link     = Controller::join_links(Director::absoluteBaseURL(), CartPage::find_link());
-            $this->checkout_link = Controller::join_links(Director::absoluteBaseURL(), CheckoutPage::find_link());
+            $cartBase = Controller::join_links(Director::absoluteBaseURL(), CartPage_Controller::config()->url_segment);
+            if ($page = CartPage::get()->first()) {
+                $cartBase = $page->AbsoluteLink();
+            }
+            $this->cart_link     = $cartBase;
+
+            $checkoutBase = Controller::join_links(Director::absoluteBaseURL(), CheckoutPage_Controller::config()->url_segment);
+            if ($page = CheckoutPage::get()->first()) {
+                $checkoutBase = $page->AbsoluteLink();
+            }
+            $this->checkout_link = $checkoutBase;
             // This means
             if ($cartPage = SiteTree::get_one('CartPage')) {
                 if ($continue = $cartPage->ContinuePage()) {
