@@ -56,7 +56,7 @@ class ShopAPIController extends Controller
          * ========================================*/
 
         if (Product::has_extension('ProductDiscountExtension')) {
-            $code = $request->param('ID');
+            $code = $request->getVar('code');
 
             if ($code) {
                 return $this->processResponse($this->cart->applyCoupon($code));
