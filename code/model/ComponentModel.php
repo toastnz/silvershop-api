@@ -44,6 +44,6 @@ class ComponentModel extends ShopModelBase
         ];
 
         $viewer = new ViewableData();
-        return $viewer->customise($data)->renderWith([$this->type . 'CheckoutComponent', 'CheckoutComponent'])->forTemplate();
+        return $this->order->customise($data)->renderWith([$this->type . 'CheckoutComponent', 'CheckoutComponent'])->forTemplate();
     }
 }
