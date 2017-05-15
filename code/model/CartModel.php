@@ -105,7 +105,13 @@ class CartModel extends ShopModelBase
                         'Item{plural} added successfully.',
                         ['plural' => $quantity == 1 ? '' : 's']
                     );
+                    // Set the cart updated flag, and which components to refresh
                     $this->cart_updated = true;
+                    $this->refresh = [
+                        'cart',
+                        'summary',
+                        'shippingmethod'
+                    ];
                     // Set new total items
                     $this->total_items = $result instanceof OrderItem ? $result->Order()->Items()->Quantity() : $quantity;
                 } else {
@@ -166,7 +172,13 @@ class CartModel extends ShopModelBase
                             'Item{plural} added successfully.',
                             ['plural' => $quantity == 1 ? '' : 's']
                         );
+                        // Set the cart updated flag, and which components to refresh
                         $this->cart_updated = true;
+                        $this->refresh = [
+                            'cart',
+                            'summary',
+                            'shippingmethod'
+                        ];
                     } else {
                         $this->code         = 'error';
                         $this->message      = $this->cart->getMessage();
@@ -210,7 +222,12 @@ class CartModel extends ShopModelBase
 
                 $this->code         = 'success';
                 $this->message      = _t('SHOP_API_MESSAGES.CouponApplied', 'Coupon applied.');
+                // Set the cart updated flag, and which components to refresh
                 $this->cart_updated = true;
+                $this->refresh = [
+                    'cart',
+                    'summary'
+                ];
             }
         } else {
             $this->code         = 'error';
@@ -233,7 +250,12 @@ class CartModel extends ShopModelBase
 
             $this->code         = 'success';
             $this->message      = _t('SHOP_API_MESSAGES.CartCleared', 'Cart cleared');
+            // Set the cart updated flag, and which components to refresh
             $this->cart_updated = true;
+            $this->refresh = [
+                'cart',
+                'summary'
+            ];
         } else {
             $this->code         = 'error';
             $this->message      = _t('SHOP_API_MESSAGES.CartAlreadyEmpty', 'Cart already empty');

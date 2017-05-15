@@ -14,6 +14,7 @@ abstract class ShopModelBase extends Object
     protected $code;
     protected $message;
     protected $cart_updated = false;
+    protected $refresh = [];
     protected $total_items = 0;
     protected $currency;
     protected $currency_symbol;
@@ -78,6 +79,7 @@ abstract class ShopModelBase extends Object
             'code' => $this->code,
             'message' => $this->message,
             'cart_updated' => $this->cart_updated,
+            'refresh' => $this->refresh,
             'quantity' => $this->total_items
         ];
     }

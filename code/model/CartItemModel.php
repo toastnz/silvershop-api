@@ -171,7 +171,13 @@ class CartItemModel extends ShopModelBase
                 if ($result === true || $result instanceof OrderItem) {
                     $this->code         = 'success';
                     $this->message      = $this->cart->getMessage();
+                    // Set the cart updated flag, and which components to refresh
                     $this->cart_updated = true;
+                    $this->refresh = [
+                        'cart',
+                        'summary',
+                        'shippingmethod'
+                    ];
                     $this->total_items  = $this->order ? $this->order->Items()->Quantity() : $quantity;
                 } else {
                     $this->code         = 'error';
@@ -229,7 +235,13 @@ class CartItemModel extends ShopModelBase
                     );
                 }
                 $this->message      = $this->cart->getMessage();
+                // Set the cart updated flag, and which components to refresh
                 $this->cart_updated = true;
+                $this->refresh = [
+                    'cart',
+                    'summary',
+                    'shippingmethod'
+                ];
                 $this->total_items  = $this->order ? $this->order->Items()->Quantity() : $quantity;
             } else {
                 $this->code         = 'error';
