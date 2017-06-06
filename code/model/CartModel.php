@@ -10,6 +10,8 @@ class CartModel extends ShopModelBase
     protected $quantity;
     protected $total_price;
     protected $total_price_nice;
+    protected $subtotal_price;
+    protected $subtotal_price_nice;
     protected $cart_link;
     protected $checkout_link;
     protected $items = [];
@@ -25,6 +27,8 @@ class CartModel extends ShopModelBase
         'quantity',
         'total_price',
         'total_price_nice',
+        'subtotal_price',
+        'subtotal_price_nice',
         'cart_link',
         'checkout_link',
         'continue_link',
@@ -40,11 +44,13 @@ class CartModel extends ShopModelBase
         $this->hash = hash('sha256', $date->format('U'));
 
         if ($this->order) {
-            $this->hash             = hash('sha256', ShoppingCart::curr()->LastEdited . $this->order->ID);
-            $this->id               = $this->order->ID;
-            $this->quantity         = $this->order->Items()->Quantity();
-            $this->total_price      = number_format($this->order->SubTotal(), 2);
-            $this->total_price_nice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $this->order->SubTotal());
+            $this->hash                = hash('sha256', ShoppingCart::curr()->LastEdited . $this->order->ID);
+            $this->id                  = $this->order->ID;
+            $this->quantity            = $this->order->Items()->Quantity();
+            $this->subtotal_price      = number_format($this->order->SubTotal(), 2);
+            $this->subtotal_price_nice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $this->order->SubTotal());
+            $this->total_price         = number_format($this->order->Total(), 2);
+            $this->total_price_nice    = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $this->order->Total());
 
             // Add items
             if ($this->order->Items()) {
