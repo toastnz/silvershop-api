@@ -67,6 +67,10 @@ class CartItemModel extends ShopModelBase
             $this->item = OrderItem::get_by_id('OrderItem', $id);
 
             if ($this->item->exists()) {
+
+                // Set the product variables
+                $this->buyable = $this->item->Buyable();
+
                 // Set the initial properties
                 $this->item_id  = $this->item->ID;
                 $this->title    = $this->item->TableTitle();
@@ -76,6 +80,10 @@ class CartItemModel extends ShopModelBase
                 $unitValue  = $this->item->UnitPrice();
                 $totalValue = $this->item->Total();
 
+                // Run any extensions
+                $this->extend('updateUnitSubTotal', $unitValue);
+                $this->extend('updateUnitTotal', $totalValue);
+
                 $this->price       = $unitValue;
                 $this->total_price = $totalValue;
 
@@ -84,9 +92,6 @@ class CartItemModel extends ShopModelBase
                 $this->total_price_nice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $totalValue);
 
                 $this->endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/item', $this->item->ID);
-
-                // Set the product variables
-                $this->buyable = $this->item->Buyable();
 
                 if ($this->buyable && $this->buyable->exists()) {
                     $this->product_id = $this->buyable->ID;
