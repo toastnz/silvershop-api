@@ -47,7 +47,7 @@ class ProductModel extends ShopModelBase
             // Get an order item
             $this->buyable = DataObject::get_by_id('Product', $id);
 
-            if ($this->buyable->exists()) {
+            if ($this->buyable && $this->buyable->exists()) {
                 // Set the initial properties
                 $this->id    = $this->buyable->ID;
                 $this->title = $this->buyable->Title;

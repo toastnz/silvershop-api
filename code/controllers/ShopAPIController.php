@@ -168,8 +168,10 @@ class ShopAPIController extends Controller
     public function processResponse($data = [])
     {
         if ($this->request->param('Action') != 'ping' && !empty($this->request->param('Action'))) {
-            ShoppingCart::curr()->setField('Hash', $this->cart->getHash());
-            ShoppingCart::curr()->write();
+            if ($cart = ShoppingCart::curr()) {
+                $cart->setField('Hash', $this->cart->getHash());
+                $cart->write();
+            }
         }
 
         return json_encode($data, JSON_HEX_QUOT | JSON_HEX_TAG);
