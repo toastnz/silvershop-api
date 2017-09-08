@@ -16,3 +16,7 @@ Simple API for use with the [Silvershop module](https://github.com/silvershop/si
 ```
  composer require toastnz/silvershop-api
 ```
+
+## Configuration
+
+Additional documentation and configuration found [here](docs/en/INDEX.md).
