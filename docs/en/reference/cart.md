@@ -17,8 +17,8 @@ The main API endpoint. Returns a json encoded string with details of the current
 | cart_link           | string          |         | Links to first CartPage instance                                                            |
 | checkout_link       | string          |         | Links to first CheckoutPage instance                                                        |
 | continue_link       | string          |         | Links to the ContinuePage() method on the first CartPage instance                           |
-| items               | array<CartItem> | []      | Holds all information of items in the cart                                                  |
-| modifiers           | array<Modifier> | []      | Holds all information of order modifiers                                                    |
+| items               | array<CartItem> | []      | Holds all information of items in the cart. See [Cart Item](item.md)                                                  |
+| modifiers           | array<Modifier> | []      | Holds all information of order modifiers. See [Modifier](modifier.md)                                                    |
 
 
 ## Methods

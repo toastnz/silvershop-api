@@ -1,7 +1,6 @@
 # Change Log
 ---
 
-
 ## [1.0.0](https://github.com/toastnz/silvershop-api/tree/1.0.0) (2017-09-08)
 
 * Documentation
