@@ -77,3 +77,13 @@ Adds a specific quantity of items.
 | Name     | Type | Description                 |
 |----------|------|-----------------------------|
 | quantity | int  | Amount of items to add      |
+
+## Response Format
+
+| Name         | Type    | Default   | Description                                    |
+|--------------|---------|-----------|------------------------------------------------|
+| code         | string  | 'success' | Either 'success' or 'error'                    |
+| message      | string  |           | More detailed message for response             |
+| cart_updated | boolean | false     | Whether the cart has successfully been updated |
+| refresh      | array   | []        | List of components that should be updated      |
+| quantity     | int     | 0         | Total quantity of all items                    |

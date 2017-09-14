@@ -43,7 +43,7 @@ abstract class ShopModelBase extends Object
             if ($page = CartPage::get()->first()) {
                 $cartBase = $page->Link();
             }
-            $this->cart_link     = $cartBase;
+            $this->cart_link = $cartBase;
 
             $checkoutBase = Controller::join_links(Director::absoluteBaseURL(), CheckoutPage_Controller::config()->url_segment);
             if ($page = CheckoutPage::get()->first()) {
@@ -76,11 +76,11 @@ abstract class ShopModelBase extends Object
     public function getActionResponse()
     {
         return [
-            'code' => $this->code,
-            'message' => $this->message,
+            'code'         => $this->code,
+            'message'      => $this->message,
             'cart_updated' => $this->cart_updated,
-            'refresh' => $this->refresh,
-            'quantity' => $this->total_items
+            'refresh'      => $this->refresh,
+            'quantity'     => $this->total_items
         ];
     }
 
