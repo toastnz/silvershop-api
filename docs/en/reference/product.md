@@ -20,6 +20,45 @@ Represents a Product.
 
 Returns the requested product in the format above.
 
+```json
+{
+    "id": 1,
+    "title": "Example Product",
+    "link": "http://mysite.local/products/test-category/example-product/",
+    "price": 30,
+    "price_nice": "$30.00",
+    "sku": "194",
+    "add_link": "http://mysite.local/shop-api/product/6048/add",
+    "product_image": {
+        "alt": "example.jpg",
+        "sizes": {
+            "small": {
+                "src": "http://mysite.local/assets/Uploads/Products/_resampled/FillWzE2MCw5MF0/example.jpg",
+                "width": 160,
+                "height": 90
+            },
+            "medium": {
+                "src": "http://mysite.local/assets/Uploads/Products/_resampled/FillWzMyMCwyMTBd/example.jpg",
+                "width": 320,
+                "height": 210
+            },
+            "large": {
+                "src": "http://mysite.local/assets/Uploads/Products/_resampled/FillWzY0MCwzNjBd/example.jpg",
+                "width": 640,
+                "height": 360
+            }
+        }
+    },
+    "categories": [
+        {
+            "id": 1,
+            "title": "Test Category"
+        }
+    ],
+    "variations": []
+}
+```
+
 ### /shop-api/cart/product/[ID]/add?quantity=[Quantity]
 
 | Name      | Type | Default | Description                       |
@@ -48,3 +87,19 @@ Any methods called above will return in the following format
 | cart_updated | boolean | false     | Whether the cart has successfully been updated |
 | refresh      | array   | []        | List of components that should be updated      |
 | quantity     | int     | 0         | Total quantity of all items                    |
+
+### JSON Response
+
+```json
+{
+    "code": "success",
+    "message": "Item added successfully.",
+    "cart_updated": true,
+    "refresh": [
+        "cart",
+        "summary",
+        "shippingmethod"
+    ],
+    "quantity": 1
+}
+```

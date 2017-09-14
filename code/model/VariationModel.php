@@ -12,7 +12,7 @@ class VariationModel extends ShopModelBase
     protected $image;
     protected $title;
     protected $price;
-    protected $priceNice;
+    protected $price_nice;
     protected $sku;
 
     protected static $fields = [
@@ -20,7 +20,7 @@ class VariationModel extends ShopModelBase
         'image',
         'title',
         'price',
-        'priceNice',
+        'price_nice',
         'sku'
     ];
 
@@ -37,11 +37,11 @@ class VariationModel extends ShopModelBase
             $this->variation = DataObject::get_by_id('ProductVariation', $id);
 
             if ($this->variation->exists()) {
-                $this->id        = $this->variation->ID;
-                $this->title     = $this->variation->Title;
-                $this->priceNice = $this->variation->dbObject('Price')->Nice();
-                $this->price     = $this->variation->Price;
-                $this->sku       = $this->variation->InternalItemID;
+                $this->id         = $this->variation->ID;
+                $this->title      = $this->variation->Title;
+                $this->price_nice = $this->variation->dbObject('Price') ->Nice();
+                $this->price      = $this->variation->Price;
+                $this->sku        = $this->variation->InternalItemID;
             }
         }
     }

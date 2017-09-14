@@ -27,18 +27,108 @@ The main API endpoint. Returns a json encoded string with details of the current
 
 Returns the current cart.
 
-### /shop-api/cart/promocode
+## JSON Response
 
-See [promocode](promocode.md).
+### Empty Cart
 
-## Response Format
+```json
+{
+    "code": "success",
+    "message": "",
+    "id": null,
+    "hash": "619b39...e3e4f5d",
+    "currency": "NZD",
+    "currency_symbol": "$",
+    "quantity": 0,
+    "total_price": 0,
+    "total_price_nice": 0,
+    "subtotal_price": 0,
+    "subtotal_price_nice": 0,
+    "cart_link": "http://mysite.local/cart/",
+    "checkout_link": "http://mysite.local/checkout/",
+    "continue_link": "http://mysite.local/",
+    "items": [],
+    "modifiers": []
+}
+```
 
-Any methods called above will return in the following format
+### Full Cart
 
-| Name         | Type    | Default   | Description                                    |
-|--------------|---------|-----------|------------------------------------------------|
-| code         | string  | 'success' | Either 'success' or 'error'                    |
-| message      | string  |           | More detailed message for response             |
-| cart_updated | boolean | false     | Whether the cart has successfully been updated |
-| refresh      | array   | []        | List of components that should be updated      |
-| quantity     | int     | 0         | Total quantity of all items                    |
+```json
+{
+    "code": "success",
+    "message": "",
+    "id": 27,
+    "hash": "3d349de8...ef6fd7e6",
+    "currency": "NZD",
+    "currency_symbol": "$",
+    "quantity": 1,
+    "total_price": "30.00",
+    "total_price_nice": "$30.00",
+    "subtotal_price": "30.00",
+    "subtotal_price_nice": "$30.00",
+    "cart_link": "http://mysite.local/cart/",
+    "checkout_link": "http://mysite.local/checkout/",
+    "continue_link": "http://mysite.local/",
+    "items": [
+        {
+            "item_id": 66,
+            "product_id": 6048,
+            "title": "Example Product",
+            "description": null,
+            "link": "http://mysite.local/products/test-category/example-product/",
+            "add_link": "http://mysite.local/shop-api/cart/item/66/addOne",
+            "add_quantity_link": "http://mysite.local/shop-api/cart/item/66/removeQuantity",
+            "remove_link": "http://mysite.local/shop-api/cart/item/66/removeOne",
+            "remove_quantity_link": "http://mysite.local/shop-api/cart/item/66/addQuantity",
+            "remove_all_link": "http://mysite.local/shop-api/cart/item/66/removeAll",
+            "price": 30,
+            "price_nice": "$30.00",
+            "quantity": 1,
+            "total_price": 30,
+            "total_price_nice": "$30.00",
+            "product_image": {
+                "alt": "example.jpg",
+                "sizes": {
+                    "small": {
+                        "src": "http://mysite.local/assets/Uploads/Products/_resampled/FillWzE2MCw5MF0/example.jpg",
+                        "width": 160,
+                        "height": 90
+                    },
+                    "medium": {
+                        "src": "http://mysite.local/assets/Uploads/Products/_resampled/FillWzMyMCwyMTBd/example.jpg",
+                        "width": 320,
+                        "height": 210
+                    },
+                    "large": {
+                        "src": "http://mysite.local/assets/Uploads/Products/_resampled/FillWzY0MCwzNjBd/example.jpg",
+                        "width": 640,
+                        "height": 360
+                    }
+                }
+            },
+            "categories": [
+                {
+                    "id": 1,
+                    "title": "Test Category"
+                }
+            ],
+            "variations": []
+        }
+    ],
+    "modifiers": [
+        {
+            "modifier_id": 25992,
+            "title": "Shipping",
+            "price": "0.00",
+            "price_nice": "$0.00"
+        },
+        {
+            "modifier_id": 25994,
+            "title": "Tax @ 15.0%",
+            "price": "3.84",
+            "price_nice": "$3.84"
+        }
+    ]
+}
+```

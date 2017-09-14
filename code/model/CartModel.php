@@ -68,9 +68,11 @@ class CartModel extends ShopModelBase
                 }
             }
         } else {
-            $this->quantity         = 0;
-            $this->total_price      = 0;
-            $this->total_price_nice = 0;
+            $this->quantity            = 0;
+            $this->total_price         = 0;
+            $this->total_price_nice    = 0;
+            $this->subtotal_price      = 0;
+            $this->subtotal_price_nice = 0;
         }
     }
 
@@ -105,15 +107,15 @@ class CartModel extends ShopModelBase
                 }
 
                 if ($result === true || $result instanceof OrderItem) {
-                    $this->code         = 'success';
-                    $this->message      = _t(
+                    $this->code    = 'success';
+                    $this->message = _t(
                         'SHOP_API_MESSAGES.ItemAdded',
                         'Item{plural} added successfully.',
                         ['plural' => $quantity == 1 ? '' : 's']
                     );
                     // Set the cart updated flag, and which components to refresh
                     $this->cart_updated = true;
-                    $this->refresh = [
+                    $this->refresh      = [
                         'cart',
                         'summary',
                         'shippingmethod'
@@ -172,15 +174,15 @@ class CartModel extends ShopModelBase
                     }
 
                     if ($result === true || $result instanceof OrderItem) {
-                        $this->code         = 'success';
-                        $this->message      = _t(
+                        $this->code    = 'success';
+                        $this->message = _t(
                             'SHOP_API_MESSAGES.ItemAdded',
                             'Item{plural} added successfully.',
                             ['plural' => $quantity == 1 ? '' : 's']
                         );
                         // Set the cart updated flag, and which components to refresh
                         $this->cart_updated = true;
-                        $this->refresh = [
+                        $this->refresh      = [
                             'cart',
                             'summary',
                             'shippingmethod'
@@ -226,11 +228,11 @@ class CartModel extends ShopModelBase
 
                 $this->order->getModifier("OrderDiscountModifier", true);
 
-                $this->code         = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.CouponApplied', 'Coupon applied.');
+                $this->code    = 'success';
+                $this->message = _t('SHOP_API_MESSAGES.CouponApplied', 'Coupon applied.');
                 // Set the cart updated flag, and which components to refresh
                 $this->cart_updated = true;
-                $this->refresh = [
+                $this->refresh      = [
                     'cart',
                     'summary'
                 ];
@@ -254,11 +256,11 @@ class CartModel extends ShopModelBase
         if ($this->order->Items()->exists()) {
             $this->order->Items()->removeAll();
 
-            $this->code         = 'success';
-            $this->message      = _t('SHOP_API_MESSAGES.CartCleared', 'Cart cleared');
+            $this->code    = 'success';
+            $this->message = _t('SHOP_API_MESSAGES.CartCleared', 'Cart cleared');
             // Set the cart updated flag, and which components to refresh
             $this->cart_updated = true;
-            $this->refresh = [
+            $this->refresh      = [
                 'cart',
                 'summary'
             ];
