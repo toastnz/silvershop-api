@@ -6,7 +6,7 @@
 
 The images returned with the cart model are resampled. Add your own yaml configuration to customise these to match you site design.
 
-Below is the default. You can replace the structure entirely, add or remove sizes, and define your own pixel dimensions.
+Below is the default. You can replace the image structure entirely, add or remove sizes, and define your own pixel dimensions.
 
 ```yaml
 ImageModel:
@@ -34,7 +34,3 @@ SilverShop API is based around a few main endpoints.
 * [product](reference/product.md)
 * [promocode](reference/promocode.md)
 * [variation](reference/variation.md)
-
-## Implementation
-
-View examples of real implementation [here](implementation.md).
