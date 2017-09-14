@@ -89,3 +89,20 @@ Any methods called above will return in the following format
 | cart_updated | boolean | false     | Whether the cart has successfully been updated |
 | refresh      | array   | []        | List of components that should be updated      |
 | quantity     | int     | 0         | Total quantity of all items                    |
+
+
+### JSON Response
+
+```json
+{
+    "code": "success",
+    "message": "Item added successfully.",
+    "cart_updated": true,
+    "refresh": [
+        "cart",
+        "summary",
+        "shippingmethod"
+    ],
+    "quantity": 1
+}
+```
