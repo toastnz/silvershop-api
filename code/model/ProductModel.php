@@ -15,8 +15,8 @@ class ProductModel extends ShopModelBase
     protected $title;
     protected $link;
     protected $price;
-    protected $priceNice;
-    protected $addLink;
+    protected $price_nice;
+    protected $add_link;
     protected $sku;
     protected $categories = [];
     protected $variations = [];
@@ -26,9 +26,9 @@ class ProductModel extends ShopModelBase
         'title',
         'link',
         'price',
-        'priceNice',
+        'price_nice',
         'sku',
-        'addLink',
+        'add_link',
         'product_image',
         'categories',
         'variations'
@@ -49,11 +49,12 @@ class ProductModel extends ShopModelBase
 
             if ($this->buyable && $this->buyable->exists()) {
                 // Set the initial properties
-                $this->id    = $this->buyable->ID;
-                $this->title = $this->buyable->Title;
-                $this->price = $this->buyable->getPrice();
-                $this->link  = $this->buyable->AbsoluteLink();
-                $this->sku   = $this->buyable->InternalItemID;
+                $this->id         = $this->buyable->ID;
+                $this->title      = $this->buyable->Title;
+                $this->price      = $this->buyable->getPrice();
+                $this->price_nice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $this->price);
+                $this->link       = $this->buyable->AbsoluteLink();
+                $this->sku        = $this->buyable->InternalItemID;
 
                 $this->endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/product', $this->id);
 
@@ -76,9 +77,9 @@ class ProductModel extends ShopModelBase
                         $attrQuery['ProductAttributes'][$attribute->ID] = '';
                     }
 
-                    $this->addLink = Controller::join_links($this->endpoint, 'addVariation') . '?' . http_build_query($attrQuery);
+                    $this->add_link = Controller::join_links($this->endpoint, 'addVariation') . '?' . http_build_query($attrQuery);
                 } else {
-                    $this->addLink = Controller::join_links($this->endpoint, 'add');
+                    $this->add_link = Controller::join_links($this->endpoint, 'add');
                 }
 
                 // Set the image
@@ -91,7 +92,7 @@ class ProductModel extends ShopModelBase
                 // Set the categories
                 if ($this->buyable->ParentID) {
                     $this->categories[] = [
-                        'id' => $this->buyable->ParentID,
+                        'id'    => $this->buyable->ParentID,
                         'title' => $this->buyable->Parent()->Title
                     ];
                 }
@@ -100,7 +101,7 @@ class ProductModel extends ShopModelBase
                     if ($this->buyable->ProductCategories()) {
                         foreach ($this->buyable->ProductCategories() as $category) {
                             $this->categories[] = [
-                                'id' => $category->ID,
+                                'id'    => $category->ID,
                                 'title' => $category->Title
                             ];
                         }

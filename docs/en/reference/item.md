@@ -20,7 +20,7 @@ Represents an OrderItem.
 | quantity             | int                   |          | Quantity of the OrderItem in the cart                                                       |
 | total_price          | int                   | 0.0      | Total price of this OrderItem (quantity * unit price)                                       |
 | total_price_nice     | string                | '$0.00'  | Formatted string of the total price for this line item                                      |
-| product_image        | array<ImageModel>     | []       | Holds an array of various sizes for a product image. See [Image Model](imagemodel.md)       |
+| product_image        | array<ImageModel>     | []       | Holds an array of various sizes for a product image. See [Image Model](image.md)       |
 | categories           | array                 | []       | Holds an array of categories with the category ID and title                                 |
 | variations           | array<VariationModel> | []       | Holds an array of all product variations. See [Variation Model](variation.md)               |
 
@@ -79,6 +79,8 @@ Adds a specific quantity of items.
 | quantity | int  | Amount of items to add      |
 
 ## Response Format
+
+Any methods called above will return in the following format
 
 | Name         | Type    | Default   | Description                                    |
 |--------------|---------|-----------|------------------------------------------------|

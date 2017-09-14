@@ -30,3 +30,15 @@ Returns the current cart.
 ### /shop-api/cart/promocode
 
 See [promocode](promocode.md).
+
+## Response Format
+
+Any methods called above will return in the following format
+
+| Name         | Type    | Default   | Description                                    |
+|--------------|---------|-----------|------------------------------------------------|
+| code         | string  | 'success' | Either 'success' or 'error'                    |
+| message      | string  |           | More detailed message for response             |
+| cart_updated | boolean | false     | Whether the cart has successfully been updated |
+| refresh      | array   | []        | List of components that should be updated      |
+| quantity     | int     | 0         | Total quantity of all items                    |
