@@ -1,25 +1,20 @@
 {
     "name": "toastnz/silvershop-api",
-    "description": "Silverstripe Shop (Silvershop) API",
+    "description": "Silverstripe Shop (SilverShop) API",
     "type": "silverstripe-module",
     "keywords": [
         "silverstripe",
         "ecommerce",
+        "json",
         "api"
     ],
     "license": "BSD-3-Clause",
     "authors": [
         {
-            "name": "Jaydn de Graaf",
-            "homepage": "http://pinc.nz/",
-            "email": "jd@pinc.nz",
-            "role": "Tall Guy"
-        },
-        {
             "name": "Danae Miller-Clendon",
             "homepage": "http://toast.co.nz/",
             "email": "danae@toast.co.nz",
-            "role": "Token Chick"
+            "role": "Developer"
         }
     ],
     "require": {

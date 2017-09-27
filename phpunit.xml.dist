@@ -1,12 +1,12 @@
 <phpunit bootstrap="framework/tests/bootstrap.php" colors="true">
 
-    <testsuite name="Toast Twitter Meta Suite">
+    <testsuite name="SilverShop API Test Suite">
         <directory>./tests</directory>
     </testsuite>
 
     <filter>
         <whitelist>
-            <directory suffix=".php">/twitter-card-meta/</directory>
+            <directory suffix=".php">/silvershop-api/</directory>
         </whitelist>
     </filter>
 
