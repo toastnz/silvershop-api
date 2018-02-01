@@ -33,7 +33,8 @@ class CartModel extends ShopModelBase
         'checkout_link',
         'continue_link',
         'items',
-        'modifiers'
+        'modifiers',
+        'shipping_id'
     ];
 
     public function __construct()
@@ -276,5 +277,37 @@ class CartModel extends ShopModelBase
     public function getHash()
     {
         return $this->hash;
+    }
+
+    public function updateShipping($shippingID)
+    {
+        // find the shiping option with the zone $zoneID added to it
+
+        $this->order->setShippingMethod( ShippingMethod::get()->byID($shippingID));
+        $this->code    = 'success';
+        $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'Cart shipping updated');
+        // Set the cart updated flag, and which components to refresh
+        $this->cart_updated = true;
+        $this->shipping_id = $shippingID;
+        $this->refresh      = [
+            'cart',
+            'summary',
+            'shipping'
+        ];
+        return $this->getActionResponse();
+    }
+
+    public function getShipping()
+    {
+        $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'Get current shipping method');
+        // Set the cart updated flag, and which components to refresh
+        $this->cart_updated = false;
+        $this->shipping_id = 1;
+        $this->refresh      = [
+            'cart',
+            'summary',
+            'shipping'
+        ];
+        return $this->getActionResponse();
     }
 }

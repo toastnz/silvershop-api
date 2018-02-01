@@ -21,7 +21,8 @@ class ShopAPIController extends Controller
         'clear',
         'component',
         'promocode',
-        'ping'
+        'ping',
+        'shipping'
     ];
 
     public function __construct()
@@ -100,6 +101,24 @@ class ShopAPIController extends Controller
 
         return $this->processResponse();
     }
+
+
+    public function shipping(SS_HTTPRequest $request)
+    {
+        $cart = $this->cart;
+        // process action
+        switch ($request->param('OtherAction')) {
+            case 'update':
+                return $this->processResponse($cart->updateShipping($request->getVar('ID')));
+            case 'get':
+                return $this->processResponse($cart->getShipping());
+            default:
+                return $this->processResponse($cart->getShipping());
+        }
+
+        return $this->processResponse();
+    }
+
 
     /**
      * @param SS_HTTPRequest $request
