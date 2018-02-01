@@ -34,7 +34,7 @@ class CartModel extends ShopModelBase
         'continue_link',
         'items',
         'modifiers',
-        'shipping_id'
+        'shipping_id',
     ];
 
     public function __construct()
@@ -279,11 +279,14 @@ class CartModel extends ShopModelBase
         return $this->hash;
     }
 
-    public function updateShipping($shippingID)
+    public function updateShipping($zoneID)
     {
         // find the shiping option with the zone $zoneID added to it
 
-        $this->order->setShippingMethod( ShippingMethod::get()->byID($shippingID));
+        $shippingID = ZonedShippingRate::get()->exclude('ZonedShippingMethodID', 0)->filter(['ZoneId' => $zoneID])->first()->ZonedShippingMethodID;
+        // search shipping methods that containe
+
+        $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
         $this->code    = 'success';
         $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'Cart shipping updated');
         // Set the cart updated flag, and which components to refresh
@@ -299,10 +302,11 @@ class CartModel extends ShopModelBase
 
     public function getShipping()
     {
+//        Debug::dump($this->order->getShippingMethods());
+//        die();
         $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'Get current shipping method');
         // Set the cart updated flag, and which components to refresh
         $this->cart_updated = false;
-        $this->shipping_id = 1;
         $this->refresh      = [
             'cart',
             'summary',
