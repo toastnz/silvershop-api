@@ -106,10 +106,23 @@ class ShopAPIController extends Controller
     public function shipping(SS_HTTPRequest $request)
     {
         $cart = $this->cart;
+
+        $addressDetails = [
+            'First Name' => 'Bill',
+            'Last Name' => 'Nye',
+            'Email' => 'billnye@thescience.guy',
+            'Phone' => '9876543210',
+            'Address' => '17 Northfield Road',
+            'Address Line 2' => '',
+            'City' => 'Auckland',
+            'Suburb' => 'Waitakere',
+            'Post Code' => '0614',
+            'Country' => 'NZ'
+        ];
         // process action
         switch ($request->param('OtherAction')) {
             case 'update':
-                return $this->processResponse($cart->updateShipping($request->getVar('ID')));
+                return $this->processResponse($cart->updateShipping($request->getVar('ID'), $addressDetails));
             case 'get':
                 return $this->processResponse($cart->getShipping());
             default:

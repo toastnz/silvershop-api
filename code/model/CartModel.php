@@ -279,24 +279,63 @@ class CartModel extends ShopModelBase
         return $this->hash;
     }
 
-    public function updateShipping($zoneID)
+    public function updateShipping($zoneID, $addressDetails)
     {
-        // find the shiping option with the zone $zoneID added to it
+        if(!$zoneID) {
+            $this->code = 'failed';
+            $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'No Zone ID');
+            // Set the cart updated flag, and which components to refresh
+            $this->cart_updated = false;
+            $this->refresh = [
+                'cart',
+                'summary',
+                'shipping'
+            ];
+        }else {
+            // find the shiping option with the zone $zoneID added to it
+            $shipping = ZonedShippingRate::get()->exclude('ZonedShippingMethodID', 0)->filter(['ZoneId' => $zoneID])->first();
+            // search shipping methods that container
 
-        $shippingID = ZonedShippingRate::get()->exclude('ZonedShippingMethodID', 0)->filter(['ZoneId' => $zoneID])->first()->ZonedShippingMethodID;
-        // search shipping methods that containe
+            if ($shipping == Null || !$this->order) {
+                $this->code = 'failed';
+                $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'Cart shipping updated');
+                // Set the cart updated flag, and which components to refresh
+                $this->cart_updated = false;
+                $this->refresh = [
+                    'cart',
+                    'summary',
+                    'shipping'
+                ];
+            } else {
+                if ($this->order->getShippingAddress()->ID == 0) {
+                    $address = new Address();
+                    $address->FirstName = $addressDetails['First Name'];
+                    $address->Surname = $addressDetails['Last Name'];
+                    $address->Email = $addressDetails['Email'];
+                    $address->Phone = $addressDetails['Phone'];
+                    $address->PostalCode = $addressDetails['Post Code'];
+                    $address->State = Zone::get()->byID($zoneID)->Title;
+                    $address->City = $addressDetails['City'];
+                    $address->Address = $addressDetails['Address'];
+                    $address->write();
 
-        $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
-        $this->code    = 'success';
-        $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'Cart shipping updated');
-        // Set the cart updated flag, and which components to refresh
-        $this->cart_updated = true;
-        $this->shipping_id = $shippingID;
-        $this->refresh      = [
-            'cart',
-            'summary',
-            'shipping'
-        ];
+                    $this->order->ShippingAddressID = $address->ID;
+                }
+                $shippingID = $shipping->ZonedShippingMethodID;
+                $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
+                $this->code = 'success';
+                $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'Cart shipping updated');
+                // Set the cart updated flag, and which components to refresh
+                $this->cart_updated = true;
+                $this->shipping_id = $shippingID;
+                $this->refresh = [
+                    'cart',
+                    'summary',
+                    'shipping'
+                ];
+            }
+        }
+
         return $this->getActionResponse();
     }
 
