@@ -321,6 +321,8 @@ class CartModel extends ShopModelBase
 
                     $this->order->ShippingAddressID = $address->ID;
                 }
+                $this->order->ShippingAddress()->State = Zone::get()->byID($zoneID)->Title;
+                $this->order->ShippingAddress()->write();
                 $shippingID = $shipping->ZonedShippingMethodID;
                 $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
                 $this->code = 'success';
@@ -341,17 +343,43 @@ class CartModel extends ShopModelBase
 
     public function getShipping()
     {
-//        Debug::dump($this->order->getShippingMethods());
-//        die();
-        $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'Get current shipping method');
-        // Set the cart updated flag, and which components to refresh
-        $this->shipping_id = $this->order->ShippingMethodID;
-        $this->cart_updated = false;
-        $this->refresh      = [
-            'cart',
-            'summary',
-            'shipping'
-        ];
+
+
+        // If there is a current shipping option
+        if ($this->order->ShippingAddressID){
+            $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'Get current shipping method');
+            $ZoneTitle =  Address::get()->byID($this->order->ShippingAddressID)->State;
+            $Zone =  Zone::get()->filter('Name', $ZoneTitle)->first();
+            if ($Zone){
+                $ZoneRate = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->first()->Rate;
+            }else{
+                $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'No current zone set');
+            }
+
+            $this->zoneShippingRate = $this->order->ShippingMethodID;
+            $this->shipping_id = $this->order->ShippingMethodID;
+            $this->shipping_rate = $ZoneRate;
+            // if shipping method is zoned
+
+            $this->cart_updated = false;
+            $this->refresh      = [
+                'cart',
+                'summary',
+                'shipping'
+            ];
+        }else{
+            $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'No current shipping method');
+            $this->shipping_id = Null;
+            // if shipping method is zoned
+
+            $this->cart_updated = false;
+            $this->refresh      = [
+                'cart',
+                'summary',
+                'shipping'
+            ];
+        }
+
         return $this->getActionResponse();
     }
 }

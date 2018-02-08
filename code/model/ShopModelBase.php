@@ -22,6 +22,7 @@ abstract class ShopModelBase extends Object
     protected $checkout_link;
     protected $continue_link;
     protected $shipping_id;
+    protected $shipping_rate;
 
     protected static $fields = [];
 
@@ -83,6 +84,7 @@ abstract class ShopModelBase extends Object
             'refresh'      => $this->refresh,
             'quantity'     => $this->total_items,
             'shipping_id'     => $this->shipping_id,
+            'shipping_rate'     => $this->shipping_rate,
         ];
     }
 
