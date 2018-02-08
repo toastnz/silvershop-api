@@ -345,6 +345,7 @@ class CartModel extends ShopModelBase
 //        die();
         $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'Get current shipping method');
         // Set the cart updated flag, and which components to refresh
+        $this->shipping_id = $this->order->ShippingMethodID;
         $this->cart_updated = false;
         $this->refresh      = [
             'cart',
