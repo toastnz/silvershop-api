@@ -321,7 +321,8 @@ class CartModel extends ShopModelBase
 
                     $this->order->ShippingAddressID = $address->ID;
                 }
-                $this->order->ShippingAddress()->State = Zone::get()->byID($zoneID)->Title;
+                $Zone = Zone::get()->byID($zoneID);
+                $this->order->ShippingAddress()->State = $Zone->Title;
                 $this->order->ShippingAddress()->write();
                 $shippingID = $shipping->ZonedShippingMethodID;
                 $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
@@ -330,6 +331,12 @@ class CartModel extends ShopModelBase
                 // Set the cart updated flag, and which components to refresh
                 $this->cart_updated = true;
                 $this->shipping_id = $shippingID;
+                if ($Zone){
+                    $ZoneRate = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->first()->Rate;
+                }else{
+                    $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'No current zone set');
+                }
+                $this->shipping_rate = $ZoneRate;
                 $this->refresh = [
                     'cart',
                     'summary',
@@ -355,6 +362,8 @@ class CartModel extends ShopModelBase
             }else{
                 $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'No current zone set');
             }
+
+            Debug::dump($ZoneRate);
 
             $this->zoneShippingRate = $this->order->ShippingMethodID;
             $this->shipping_id = $this->order->ShippingMethodID;
