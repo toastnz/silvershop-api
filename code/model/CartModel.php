@@ -321,6 +321,7 @@ class CartModel extends ShopModelBase
 
                     $this->order->ShippingAddressID = $address->ID;
                 }
+
                 $Zone = Zone::get()->byID($zoneID);
                 $this->order->ShippingAddress()->State = $Zone->Title;
                 $this->order->ShippingAddress()->write();
@@ -331,12 +332,26 @@ class CartModel extends ShopModelBase
                 // Set the cart updated flag, and which components to refresh
                 $this->cart_updated = true;
                 $this->shipping_id = $shippingID;
+
                 if ($Zone){
-                    $ZoneRate = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->first()->Rate;
+                    $ZoneShippingRegions = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->Sort('Rate ASC');
+                    $ZoneShippingRegion = $ZoneShippingRegions->first();
+                    $ZoneRate = $ZoneShippingRegion->Rate;
                 }else{
                     $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'No current zone set');
                 }
                 $this->shipping_rate = $ZoneRate;
+                // check if this this order qulifies for any table shipping.
+                $tableShippingOptions = $this->order->getShippingEstimates()->filter(['ClassName' => 'TableShippingMethod'])->Sort('Rate ASC');
+                if ($tableShippingOptions->count() >= 1){
+                    $newShippingOption = $tableShippingOptions->first();
+                    $this->shipping_id = $newShippingOption->ID;
+                    $this->shipping_rate = $newShippingOption->Rate;
+                    $shippingID = $newShippingOption->ID;
+                    $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
+                }
+
+
                 $this->refresh = [
                     'cart',
                     'summary',
@@ -357,17 +372,22 @@ class CartModel extends ShopModelBase
             $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'Get current shipping method');
             $ZoneTitle =  Address::get()->byID($this->order->ShippingAddressID)->State;
             $Zone =  Zone::get()->filter('Name', $ZoneTitle)->first();
-            if ($Zone){
-                $ZoneRate = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->first()->Rate;
+            if (ShippingMethod::get()->byID($this->order->ShippingMethodID)->ClassName == 'ZonedShippingMethod'){
+                if ($Zone){
+                    $ZoneRate = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->first()->Rate;
+                }else{
+                    $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'No current zone set');
+                }
+                $this->zoneShippingRate = $this->order->ShippingMethodID;
+                $this->shipping_id = $this->order->ShippingMethodID;
+                $this->shipping_rate = $ZoneRate;
             }else{
-                $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'No current zone set');
+                $this->shipping_id = $this->order->ShippingMethodID;
+                $this->shipping_rate = ShippingMethod::get()->byID($this->order->ShippingMethodID)->Rate;
             }
 
-            Debug::dump($ZoneRate);
 
-            $this->zoneShippingRate = $this->order->ShippingMethodID;
-            $this->shipping_id = $this->order->ShippingMethodID;
-            $this->shipping_rate = $ZoneRate;
+
             // if shipping method is zoned
 
             $this->cart_updated = false;
