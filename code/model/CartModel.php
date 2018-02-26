@@ -309,14 +309,14 @@ class CartModel extends ShopModelBase
             } else {
                 if ($this->order->getShippingAddress()->ID == 0) {
                     $address = new Address();
-                    $address->FirstName = $addressDetails['First Name'];
-                    $address->Surname = $addressDetails['Last Name'];
-                    $address->Email = $addressDetails['Email'];
-                    $address->Phone = $addressDetails['Phone'];
-                    $address->PostalCode = $addressDetails['Post Code'];
+                    $address->FirstName = $addressDetails['ShippingAddressCheckoutComponent_FirstName'];
+                    $address->Surname = $addressDetails['ShippingAddressCheckoutComponent_Surname'];
+                    $address->Email = $addressDetails['ShippingAddressCheckoutComponent_Email'];
+                    $address->Phone = $addressDetails['ShippingAddressCheckoutComponent_Phone'];
+                    $address->PostalCode = $addressDetails['ShippingAddressCheckoutComponent_PostalCode'];
                     $address->State = Zone::get()->byID($zoneID)->Title;
-                    $address->City = $addressDetails['City'];
-                    $address->Address = $addressDetails['Address'];
+                    $address->City = $addressDetails['ShippingAddressCheckoutComponent_City'];
+                    $address->Address = $addressDetails['ShippingAddressCheckoutComponent_Address'];
                     $address->write();
 
                     $this->order->ShippingAddressID = $address->ID;
@@ -334,9 +334,29 @@ class CartModel extends ShopModelBase
                 $this->shipping_id = $shippingID;
 
                 if ($Zone){
-                    $ZoneShippingRegions = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->Sort('Rate ASC');
-                    $ZoneShippingRegion = $ZoneShippingRegions->first();
-                    $ZoneRate = $ZoneShippingRegion->Rate;
+                    $isRural = false;
+                    if ($isRural){
+                        $ZoneShippingMethods = ShippingMethod::get()->filter(['Name:PartialMatch' => 'Rural']);
+                        foreach ($ZoneShippingMethods as $ZoneShippingMethod){
+                            $ZoneShippingRegions = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $ZoneShippingMethod->ID, 'ZoneID' => $Zone->ID])->Sort('Rate ASC');
+                            Debug::dump($ZoneShippingRegions->count());
+                            if ($ZoneShippingRegions->count() >= 1){
+                                $this->order->setShippingMethod(ShippingMethod::get()->byID($ZoneShippingMethod->ID));
+                                $shippingID = $ZoneShippingMethod->ID;
+                                $ZoneShippingRegionsSelected = $ZoneShippingRegions;
+                            }
+                        }
+
+                        $ZoneShippingRegion = $ZoneShippingRegionsSelected->first();
+
+                        $shippingID = $shipping->ZonedShippingMethodID;
+                        $ZoneRate = $ZoneShippingRegion->Rate;
+                    }else{
+                        $ZoneShippingRegions = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->Sort('Rate ASC');
+                        $ZoneShippingRegion = $ZoneShippingRegions->first();
+                        $ZoneRate = $ZoneShippingRegion->Rate;
+                    }
+
                 }else{
                     $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'No current zone set');
                 }
