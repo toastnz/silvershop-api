@@ -317,6 +317,7 @@ class CartModel extends ShopModelBase
                     $address->State = Zone::get()->byID($zoneID)->Title;
                     $address->City = $addressDetails['ShippingAddressCheckoutComponent_City'];
                     $address->Address = $addressDetails['ShippingAddressCheckoutComponent_Address'];
+
                     $address->write();
 
                     $this->order->ShippingAddressID = $address->ID;
@@ -334,12 +335,19 @@ class CartModel extends ShopModelBase
                 $this->shipping_id = $shippingID;
 
                 if ($Zone){
-                    $isRural = false;
+                    if (array_key_exists('RuralShipping', $addressDetails))
+                        $isRural = $addressDetails['RuralShipping'];
+                    else{
+                        $isRural = 0;
+                    }
+                    $address = Address::get()->byID($this->order->ShippingAddressID);
+                    $address->RuralShipping = $isRural;
+                    $address->write();
+
                     if ($isRural){
                         $ZoneShippingMethods = ShippingMethod::get()->filter(['Name:PartialMatch' => 'Rural']);
                         foreach ($ZoneShippingMethods as $ZoneShippingMethod){
                             $ZoneShippingRegions = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $ZoneShippingMethod->ID, 'ZoneID' => $Zone->ID])->Sort('Rate ASC');
-                            Debug::dump($ZoneShippingRegions->count());
                             if ($ZoneShippingRegions->count() >= 1){
                                 $this->order->setShippingMethod(ShippingMethod::get()->byID($ZoneShippingMethod->ID));
                                 $shippingID = $ZoneShippingMethod->ID;
