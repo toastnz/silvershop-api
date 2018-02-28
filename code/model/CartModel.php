@@ -291,11 +291,20 @@ class CartModel extends ShopModelBase
                 'summary',
                 'shipping'
             ];
+        }elseif (!$addressDetails['ShippingAddressCheckoutComponent_FirstName'] && !$addressDetails['ShippingAddressCheckoutComponent_Surname'] && !$addressDetails['ShippingAddressCheckoutComponent_Email'] && !$addressDetails['ShippingAddressCheckoutComponent_Phone'] && !$addressDetails['ShippingAddressCheckoutComponent_PostalCode'] && !$addressDetails['ShippingAddressCheckoutComponent_City'] && !$addressDetails['ShippingAddressCheckoutComponent_Address']){
+            $this->code = 'failed';
+            $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'No Address details');
+            // Set the cart updated flag, and which components to refresh
+            $this->cart_updated = false;
+            $this->refresh = [
+                'cart',
+                'summary',
+                'shipping'
+            ];
         }else {
             // find the shiping option with the zone $zoneID added to it
             $shipping = ZonedShippingRate::get()->exclude('ZonedShippingMethodID', 0)->filter(['ZoneId' => $zoneID])->first();
             // search shipping methods that container
-
             if ($shipping == Null || !$this->order) {
                 $this->code = 'failed';
                 $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'Cart shipping updated');
