@@ -43,7 +43,6 @@ class CartModel extends ShopModelBase
 
         $date       = date_create();
         $this->hash = hash('sha256', $date->format('U'));
-
         if ($this->order) {
             $this->hash                = hash('sha256', ShoppingCart::curr()->LastEdited . $this->order->ID);
             $this->id                  = $this->order->ID;
@@ -354,6 +353,7 @@ class CartModel extends ShopModelBase
                     $address->write();
 
                     if ($isRural){
+
                         $ZoneShippingMethods = ShippingMethod::get()->filter(['Name:PartialMatch' => 'Rural']);
                         foreach ($ZoneShippingMethods as $ZoneShippingMethod){
                             $ZoneShippingRegions = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $ZoneShippingMethod->ID, 'ZoneID' => $Zone->ID])->Sort('Rate ASC');
@@ -363,12 +363,16 @@ class CartModel extends ShopModelBase
                                 $ZoneShippingRegionsSelected = $ZoneShippingRegions;
                             }
                         }
-
+//                        Debug::dump($ZoneShippingRegionsSelected);
+//
+//
                         $ZoneShippingRegion = $ZoneShippingRegionsSelected->first();
-
+//
                         $shippingID = $shipping->ZonedShippingMethodID;
                         $ZoneRate = $ZoneShippingRegion->Rate;
+                        $this->shipping_id = $shippingID;
                     }else{
+
                         $ZoneShippingRegions = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->Sort('Rate ASC');
                         $ZoneShippingRegion = $ZoneShippingRegions->first();
                         $ZoneRate = $ZoneShippingRegion->Rate;
@@ -387,6 +391,10 @@ class CartModel extends ShopModelBase
                     $shippingID = $newShippingOption->ID;
                     $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
                 }
+
+                $package = $this->owner->createShippingPackage();
+                $this->owner->ShippingTotal = $this->order->calculateRate($package, $address);
+//                $this->order->ShippingTotal = ;
 
 
                 $this->refresh = [
