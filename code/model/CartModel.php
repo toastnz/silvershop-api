@@ -329,6 +329,18 @@ class CartModel extends ShopModelBase
                     $address->write();
 
                     $this->order->ShippingAddressID = $address->ID;
+                }else{
+                    $address = $this->order->ShippingAddress();
+                    $address->FirstName = $addressDetails['ShippingAddressCheckoutComponent_FirstName'];
+                    $address->Surname = $addressDetails['ShippingAddressCheckoutComponent_Surname'];
+                    $address->Email = $addressDetails['ShippingAddressCheckoutComponent_Email'];
+                    $address->Phone = $addressDetails['ShippingAddressCheckoutComponent_Phone'];
+                    $address->PostalCode = $addressDetails['ShippingAddressCheckoutComponent_PostalCode'];
+                    $address->State = Zone::get()->byID($zoneID)->Title;
+                    $address->City = $addressDetails['ShippingAddressCheckoutComponent_City'];
+                    $address->Address = $addressDetails['ShippingAddressCheckoutComponent_Address'];
+
+                    $address->write();
                 }
 
                 $Zone = Zone::get()->byID($zoneID);
@@ -348,7 +360,7 @@ class CartModel extends ShopModelBase
                     else{
                         $isRural = 0;
                     }
-                    $address = Address::get()->byID($this->order->ShippingAddressID);
+//                    $address = Address::get()->byID($this->order->ShippingAddressID);
                     $address->RuralShipping = $isRural;
                     $address->write();
 
@@ -390,11 +402,8 @@ class CartModel extends ShopModelBase
                     $this->shipping_rate = $newShippingOption->Rate;
                     $shippingID = $newShippingOption->ID;
                     $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
+                    $this->owner->order->ShippingTotal = $this->shipping_rate;
                 }
-
-//                $package = $this->owner->order->createShippingPackage();
-                $this->owner->order->ShippingTotal = $this->shipping_rate;
-//                $this->order->ShippingTotal = ;
                 $this->refresh = [
                     'cart',
                     'summary',
