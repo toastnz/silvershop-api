@@ -392,11 +392,9 @@ class CartModel extends ShopModelBase
                     $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
                 }
 
-                $package = $this->owner->createShippingPackage();
-                $this->owner->ShippingTotal = $this->order->calculateRate($package, $address);
+//                $package = $this->owner->order->createShippingPackage();
+                $this->owner->order->ShippingTotal = $this->shipping_rate;
 //                $this->order->ShippingTotal = ;
-
-
                 $this->refresh = [
                     'cart',
                     'summary',
