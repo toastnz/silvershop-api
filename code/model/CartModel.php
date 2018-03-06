@@ -368,9 +368,9 @@ class CartModel extends ShopModelBase
 //
                         $ZoneShippingRegion = $ZoneShippingRegionsSelected->first();
 //
-                        $shippingID = $shipping->ZonedShippingMethodID;
                         $ZoneRate = $ZoneShippingRegion->Rate;
-                        $this->shipping_id = $shippingID;
+                        $this->shipping_id = $ZoneShippingRegion->ZonedShippingMethodID;
+
                     }else{
 
                         $ZoneShippingRegions = ZonedShippingRate::get()->filter(['ZonedShippingMethodID' => $this->order->ShippingMethodID, 'ZoneID' => $Zone->ID])->Sort('Rate ASC');
