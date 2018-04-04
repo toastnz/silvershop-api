@@ -1,0 +1,15 @@
+mappings:
+  ShopAPIController: Toast\ShopAPI\Control\ShopAPIController
+  ShopAPIConfig: Toast\ShopAPI\Model\ShopAPIConfig
+  ShopAPIOrderExtension: Toast\ShopAPI\Extension\OrderExtension
+  ShopAPIProductExtension: Toast\ShopAPI\Extension\ProductExtension
+  ShopAPISiteTreeExtension: Toast\ShopAPI\Extension\SiteTreeExtension
+  ShopAPIVariationExtension: Toast\ShopAPI\Extension\VariationExtension
+  CartItemModel: Toast\ShopAPI\Model\CartItemModel
+  CartModel: Toast\ShopAPI\Model\CartModel
+  ComponentModel: Toast\ShopAPI\Model\ComponentModel
+  ImageModel: Toast\ShopAPI\Model\ImageModel
+  ModifierModel: Toast\ShopAPI\Model\ModifierModel
+  ProductModel: Toast\ShopAPI\Model\ProductModel
+  ShopModelBase: Toast\ShopAPI\Model\ShopModelBase
+  VariationModel: Toast\ShopAPI\Model\VariationModel

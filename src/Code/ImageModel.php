@@ -1,5 +1,7 @@
 <?php
 
+namespace Toast\ShopAPI\Model;
+
 /**
  * Class ImageModel
  */

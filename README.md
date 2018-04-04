@@ -9,7 +9,7 @@
 
 # Silvershop API
 
-Simple API for use with the [Silvershop module](https://github.com/silvershop/silvershop-core). Currently in pre-release - untested.
+Simple API for use with the [Silvershop module](https://github.com/silvershop/silvershop-core). Not considered stable.
 
 ## Installation
 

@@ -1,11 +1,13 @@
 <?php
 
+namespace Toast\ShopAPI\Extension;
+
 /**
- * Class ShopAPIOrderExtension
+ * Class OrderExtension
  *
- * @property ShopAPIOrderExtension|Order $owner
+ * @property Order $owner
  */
-class ShopAPIOrderExtension extends DataExtension
+class OrderExtension extends DataExtension
 {
     private static $db = [
         'Hash' => 'Varchar(256)'

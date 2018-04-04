@@ -1,9 +1,11 @@
 <?php
 
+namespace Toast\ShopAPI\Extension;
+
 /**
- * Class ShopAPISiteTreeExtension
+ * Class SiteTreeExtension
  */
-class ShopAPISiteTreeExtension extends DataExtension
+class SiteTreeExtension extends DataExtension
 {
     public function getShopApiUrl()
     {

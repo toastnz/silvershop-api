@@ -1,5 +1,7 @@
 <?php
 
+namespace Toast\Control;
+
 /**
  * Class ShopAPIController
  */
