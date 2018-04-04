@@ -23,16 +23,24 @@ class ImageModel extends ShopModelBase
 
         if ($id && is_numeric($id)) {
             // Get the image object
-            $this->image = Image::get_by_id('Image', $id);
+            $image = Image::get_by_id('Image', $id);
 
-            if ($this->image && $this->image->exists()) {
+            if ($image && $image->exists()) {
+
+                $this->extend('updateImage', $image);
+
+                $this->image = $image;
+
                 // Set the initial properties
                 $this->image_id = $this->image->ID;
                 $this->alt      = $this->image->Title;
             }
+
         } else {
             $this->image_id = 0;
             $this->alt      = 'Placeholder';
+
+            $this->image = $this->extend('updateImagePlaceholder');
         }
 
         $this->sizes = $this->getImageSizes();

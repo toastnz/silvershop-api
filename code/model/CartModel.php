@@ -45,6 +45,9 @@ class CartModel extends ShopModelBase
         $this->hash = hash('sha256', $date->format('U'));
 
         if ($this->order) {
+
+            $this->extend('updateCartOrder', $this->order);
+
             $this->hash                = hash('sha256', ShoppingCart::curr()->LastEdited . $this->order->ID);
             $this->id                  = $this->order->ID;
             $this->quantity            = $this->order->Items()->Quantity();
@@ -75,6 +78,8 @@ class CartModel extends ShopModelBase
             $this->subtotal_price      = 0;
             $this->subtotal_price_nice = 0;
         }
+
+        $this->extend('onAfterSetup');
     }
 
     /**
@@ -97,6 +102,9 @@ class CartModel extends ShopModelBase
 
             if ($product && $product->exists()) {
                 $quantity = $quantity > 0 ? $quantity : 1;
+
+                $this->extend('onBeforeAddItem', $product);
+
                 try {
                     $result = $this->cart->add($product, $quantity);
                 } catch (Exception $e) {
@@ -123,6 +131,7 @@ class CartModel extends ShopModelBase
                     ];
                     // Set new total items
                     $this->total_items = $result instanceof OrderItem ? $result->Order()->Items()->Quantity() : $quantity;
+
                 } else {
                     $this->code         = 'error';
                     $this->message      = $this->cart->getMessage();
@@ -138,6 +147,8 @@ class CartModel extends ShopModelBase
             $this->message      = _t('SHOP_API_MESSAGES.IncorrectIDParam', 'Missing or malformed ID');
             $this->cart_updated = false;
         }
+
+        $this->extend('onAfterAddItem');
 
         return $this->getActionResponse();
     }
@@ -162,6 +173,9 @@ class CartModel extends ShopModelBase
             $productModel = ProductModel::create($buyableID);
 
             if ($productAttributes && is_array($productAttributes)) {
+
+                $this->extend('onBeforeAddVariation', $productAttributes);
+
                 if ($productVariation = $productModel->getVariationByAttributes($productAttributes)) {
                     $quantity = $quantity > 0 ? $quantity : 1;
                     try {
@@ -188,6 +202,7 @@ class CartModel extends ShopModelBase
                             'summary',
                             'shippingmethod'
                         ];
+
                     } else {
                         $this->code         = 'error';
                         $this->message      = $this->cart->getMessage();
@@ -210,6 +225,8 @@ class CartModel extends ShopModelBase
             $this->cart_updated = false;
         }
 
+        $this->extend('onAfterAddVariation');
+
         return $this->getActionResponse();
     }
 
@@ -219,7 +236,12 @@ class CartModel extends ShopModelBase
          * @var OrderCoupon $coupon
          * ========================================*/
 
+        $this->extend('onBeforeApplyCoupon');
+
         if ($coupon = OrderCoupon::get_by_code($code)) {
+
+            $this->extend('updateCoupon', $coupon);
+
             if (!$coupon->validateOrder($this->order, ["CouponCode" => $code])) {
                 $this->code         = 'error';
                 $this->message      = _t('SHOP_API_MESSAGES.CouponInvalid', 'Could not apply coupon.');
@@ -244,6 +266,8 @@ class CartModel extends ShopModelBase
             $this->cart_updated = false;
         }
 
+        $this->extend('onAfterApplyCoupon');
+
         return $this->getActionResponse();
     }
 
@@ -254,6 +278,8 @@ class CartModel extends ShopModelBase
      */
     public function clear()
     {
+        $this->extend('onBeforeClearCart');
+
         if ($this->order->Items()->exists()) {
             $this->order->Items()->removeAll();
 
@@ -271,6 +297,8 @@ class CartModel extends ShopModelBase
             $this->cart_updated = false;
         }
 
+        $this->extend('onAfterClearCart');
+
         return $this->getActionResponse();
     }
 
@@ -281,8 +309,9 @@ class CartModel extends ShopModelBase
 
     public function updateShipping($zoneID)
     {
-        // find the shiping option with the zone $zoneID added to it
+        $this->extend('onBeforeUpdateShipping', $zoneID);
 
+        // find the shiping option with the zone $zoneID added to it
         $shippingID = ZonedShippingRate::get()->exclude('ZonedShippingMethodID', 0)->filter(['ZoneId' => $zoneID])->first()->ZonedShippingMethodID;
         // search shipping methods that containe
 
@@ -297,6 +326,9 @@ class CartModel extends ShopModelBase
             'summary',
             'shipping'
         ];
+
+        $this->extend('onAfterUpdateShipping');
+
         return $this->getActionResponse();
     }
 

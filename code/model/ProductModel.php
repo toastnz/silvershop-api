@@ -109,6 +109,8 @@ class ProductModel extends ShopModelBase
                 }
             }
         }
+
+        $this->extend('onAfterSetup');
     }
 
     public function getVariationByAttributes(array $attributes)

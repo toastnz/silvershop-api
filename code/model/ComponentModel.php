@@ -34,16 +34,28 @@ class ComponentModel extends ShopModelBase
         }
     }
 
+    public function getComponentFields()
+    {
+        $fields = $this->form_fields;
+
+        $this->extend('updateComponentFields', $fields);
+
+        return $this->form_fields;
+    }
+
     public function forTemplate()
     {
         $componentTitle = preg_replace('/([a-z])([A-Z])/s', '$1 $2', $this->type);
 
+        $this->extend('updateComponentTitle', $componentTitle);
+
+        $fields = $this->getComponentFields();
+
         $data = [
-            'Title' => _t('TOASTSHOP' . $this->type .'CheckoutComponentTitle', $componentTitle),
-            'Fields' => $this->component->getFormFields($this->order)
+            'Title'  => _t('TOASTSHOP' . $this->type . 'CheckoutComponentTitle', $componentTitle),
+            'Fields' => $fields
         ];
 
-        $viewer = new ViewableData();
         return $this->order->customise($data)->renderWith([$this->type . 'CheckoutComponent', 'CheckoutComponent'])->forTemplate();
     }
 }

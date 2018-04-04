@@ -76,23 +76,41 @@ abstract class ShopModelBase extends Object
 
     public function getActionResponse()
     {
-        return [
+        $refreshComponents = $this->refresh;
+
+        $this->extend('updateRefreshComponents', $refreshComponents);
+
+        $data = [
             'code'         => $this->code,
             'message'      => $this->message,
             'cart_updated' => $this->cart_updated,
-            'refresh'      => $this->refresh,
+            'refresh'      => $refreshComponents,
             'quantity'     => $this->total_items,
-            'shipping_id'     => $this->shipping_id,
+            'shipping_id'  => $this->shipping_id,
         ];
+
+        $this->extend('onBeforeActionResponse', $data);
+
+        return $data;
     }
 
     public function getSiteCurrency()
     {
-        return singleton('ShopAPIConfig')->getSiteCurrency();
+        $currency = singleton('ShopAPIConfig')->getSiteCurrency();
+
+        $this->extend('updateSiteCurrency', $currency);
+
+        return $currency;
     }
 
     public function getSiteCurrencySymbol()
     {
-        return singleton('ShopAPIConfig')->getSiteCurrencySymbol();
+        $symbol = singleton('ShopAPIConfig')->getSiteCurrencySymbol();
+
+        $this->extend('updateSiteCurrencySymbol', $symbol);
+
+        return $symbol;
     }
+
+
 }

@@ -42,7 +42,11 @@ class ModifierModel extends ShopModelBase
                 $this->price = $unitValue;
 
                 // Format
-                $this->price_nice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $unitValue);
+                $nicePrice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $unitValue);
+
+                $this->extend('updateDisplayPrice', $nicePrice, $unitValue);
+
+                $this->price_nice = $nicePrice;
             }
         }
     }

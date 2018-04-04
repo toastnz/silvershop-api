@@ -141,6 +141,8 @@ class CartItemModel extends ShopModelBase
                 }
             }
         }
+
+        $this->extend('onAfterSetup');
     }
 
     /**
@@ -161,7 +163,11 @@ class CartItemModel extends ShopModelBase
      */
     public function setQuantity($quantity)
     {
+
         if ($this->buyable) {
+
+            $this->extend('onBeforeSetQuantity', $quantity, $this->buyable);
+
             if (is_numeric($quantity)) {
                 try {
                     $result = $this->cart->setQuantity($this->buyable, $quantity);
@@ -183,7 +189,9 @@ class CartItemModel extends ShopModelBase
                         'summary',
                         'shippingmethod'
                     ];
+
                     $this->total_items  = $this->order ? $this->order->Items()->Quantity() : $quantity;
+
                 } else {
                     $this->code         = 'error';
                     $this->message      = $this->cart->getMessage();
@@ -200,6 +208,8 @@ class CartItemModel extends ShopModelBase
             $this->message      = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
             $this->cart_updated = false;
         }
+
+        $this->extend('onAfterSetQuantity');
 
         return $this->getActionResponse();
     }
@@ -225,6 +235,14 @@ class CartItemModel extends ShopModelBase
             }
 
             if ($result === true || $result instanceof OrderItem) {
+
+
+                if ($add) {
+                    $this->extend('onAfterAddItem', $quantity, $result);
+                } else {
+                    $this->extend('onAfterRemoveItem', $quantity, $result);
+                }
+
                 $this->code = 'success';
                 if ($add) {
                     $this->message = _t(
@@ -258,6 +276,8 @@ class CartItemModel extends ShopModelBase
             $this->message      = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
             $this->cart_updated = false;
         }
+
+        $this->extend('onAddOrRemoveItems');
 
         return $this->getActionResponse();
     }
