@@ -96,6 +96,8 @@ class ShopAPIController extends Controller
         if ($id && is_numeric($id)) {
             $item = CartItemModel::create($id);
 
+            // TODO: Validation on quantity
+
             // process action
             switch ($request->param('OtherAction')) {
                 case 'setQuantity':

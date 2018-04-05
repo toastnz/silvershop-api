@@ -134,7 +134,7 @@ class CartItemModel extends ShopModelBase
                     // Set the categories
                     if ($this->buyable->ParentID) {
                         $this->categories[] = [
-                            'id' => $this->buyable->ParentID,
+                            'id'    => $this->buyable->ParentID,
                             'title' => $this->buyable->Parent()->Title
                         ];
                     }
@@ -143,7 +143,7 @@ class CartItemModel extends ShopModelBase
                         if ($this->buyable->ProductCategories()) {
                             foreach ($this->buyable->ProductCategories() as $category) {
                                 $this->categories[] = [
-                                    'id' => $category->ID,
+                                    'id'    => $category->ID,
                                     'title' => $category->Title
                                 ];
                             }
@@ -174,6 +174,7 @@ class CartItemModel extends ShopModelBase
      */
     public function setQuantity($quantity)
     {
+        $this->called_method = 'setQuantity';
 
         if ($this->buyable) {
 
@@ -183,7 +184,8 @@ class CartItemModel extends ShopModelBase
                 try {
                     $result = $this->cart->setQuantity($this->buyable, $quantity);
                 } catch (Exception $e) {
-                    $this->code         = 'error';
+                    $this->code         = 400;
+                    $this->status       = 'error';
                     $this->message      = $e->getMessage();
                     $this->cart_updated = false;
 
@@ -191,31 +193,34 @@ class CartItemModel extends ShopModelBase
                 }
 
                 if ($result === true || $result instanceof OrderItem) {
-                    $this->code         = 'success';
-                    $this->message      = $this->cart->getMessage();
+                    $this->status  = 'success';
+                    $this->message = $this->cart->getMessage();
                     // Set the cart updated flag, and which components to refresh
                     $this->cart_updated = true;
-                    $this->refresh = [
+                    $this->refresh      = [
                         'cart',
                         'summary',
                         'shippingmethod'
                     ];
 
-                    $this->total_items  = $this->order ? $this->order->Items()->Quantity() : $quantity;
+                    $this->total_items = $this->order ? $this->order->Items()->Quantity() : $quantity;
 
                 } else {
-                    $this->code         = 'error';
+                    $this->code         = 400;
+                    $this->status       = 'error';
                     $this->message      = $this->cart->getMessage();
                     $this->cart_updated = false;
                 }
 
             } else {
-                $this->code         = 'error';
+                $this->code         = 400;
+                $this->status       = 'error';
                 $this->message      = _t('SHOP_API_MESSAGES.QuantityMissing', 'Quantity missing or not a number');
                 $this->cart_updated = false;
             }
         } else {
-            $this->code         = 'error';
+            $this->code         = 404;
+            $this->status       = 'error';
             $this->message      = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
             $this->cart_updated = false;
         }
@@ -234,11 +239,13 @@ class CartItemModel extends ShopModelBase
      */
     public function addOrRemoveItems($add = true, $quantity = 1)
     {
+        $this->called_method = 'addOrRemoveItems';
+
         if ($this->buyable) {
             try {
                 $result = $add ? $this->cart->add($this->buyable, $quantity) : $this->cart->remove($this->buyable, $quantity);
             } catch (Exception $e) {
-                $this->code         = 'error';
+                $this->status       = 'error';
                 $this->message      = $e->getMessage();
                 $this->cart_updated = false;
 
@@ -254,7 +261,7 @@ class CartItemModel extends ShopModelBase
                     $this->extend('onAfterRemoveItem', $quantity, $result);
                 }
 
-                $this->code = 'success';
+                $this->status = 'success';
                 if ($add) {
                     $this->message = _t(
                         'SHOP_API_MESSAGES.ItemAdded',
@@ -268,22 +275,24 @@ class CartItemModel extends ShopModelBase
                         ['plural' => $quantity == 1 ? '' : 's']
                     );
                 }
-                $this->message      = $this->cart->getMessage();
+                $this->message = $this->cart->getMessage();
                 // Set the cart updated flag, and which components to refresh
                 $this->cart_updated = true;
-                $this->refresh = [
+                $this->refresh      = [
                     'cart',
                     'summary',
                     'shippingmethod'
                 ];
                 $this->total_items  = $this->order ? $this->order->Items()->Quantity() : $quantity;
             } else {
-                $this->code         = 'error';
+                $this->code         = 400;
+                $this->status       = 'error';
                 $this->message      = $this->cart->getMessage();
                 $this->cart_updated = false;
             }
         } else {
-            $this->code         = 'error';
+            $this->code         = 404;
+            $this->status       = 'error';
             $this->message      = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
             $this->cart_updated = false;
         }

@@ -12,9 +12,11 @@ use SilverShop\Page\CheckoutPageController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Core\Injector\Injector;
 
 /**
  * Class ShopModelBase
@@ -31,16 +33,97 @@ abstract class ShopModelBase
     /** @var ShoppingCart $cart */
     protected $cart;
 
+    /**
+     * @var int
+     *
+     * Status code
+     */
     protected $code;
+
+    /**
+     * @var string
+     *
+     * Status of the request - success|error
+     */
+    protected $status;
+
+    /**
+     * @var string
+     *
+     * Method called in PHP, eg, addItem()
+     */
+    protected $called_method;
+
+    /**
+     * @var string
+     *
+     * Relevant message
+     */
     protected $message;
+
+    /**
+     * @var bool
+     *
+     * Lets us know if the cart was modified at all
+     */
     protected $cart_updated = false;
+
+    /**
+     * @var array
+     *
+     * List of components in the checkout that need to be updated through ajax
+     */
     protected $refresh = [];
+
+    /**
+     * @var int
+     *
+     * Total number of items in cart
+     */
     protected $total_items = 0;
+
+    /**
+     * @var string
+     *
+     * 3 character currency code
+     */
     protected $currency;
+
+    /**
+     * @var string
+     *
+     * Currency symbol - eg $
+     */
     protected $currency_symbol;
+
+    /**
+     * @var string
+     *
+     * Absolute link to the cart page
+     */
     protected $cart_link;
+
+    /**
+     * @var string
+     *
+     * Absolute link to the checkout page
+     */
     protected $checkout_link;
+
+    /**
+     * @var string
+     *
+     * Absolute link to continue shopping (catalog)
+     */
     protected $continue_link;
+
+    /**
+     * @var string
+     *
+     * Holds the time in microseconds since the request was made
+     */
+    protected $elapsed;
+
     protected $shipping_id;
 
     protected static $fields = [];
@@ -48,8 +131,13 @@ abstract class ShopModelBase
     public function __construct()
     {
         // Common fields
-        $this->code            = 'success';
-        $this->message         = '';
+        $this->status        = 'success';
+        $this->called_method = 'cart';
+        $this->code          = 200;
+        $this->message       = '';
+        $this->elapsed       = $_SERVER["REQUEST_TIME_FLOAT"];
+
+        // Shop specific
         $this->currency        = $this->getSiteCurrency();
         $this->currency_symbol = $this->getSiteCurrencySymbol();
         $this->total_items     = $this->order ? $this->order->Items()->Quantity() : 0;
@@ -58,11 +146,11 @@ abstract class ShopModelBase
         if (class_exists(ShoppingCart::class)) {
 
             try {
-
                 $this->cart  = ShoppingCart::singleton();
                 $this->order = $this->cart->current();
             } catch (Exception $e) {
-                $this->code = 'error';
+                $this->status  = 'error';
+                $this->code    = 400;
                 $this->message = $e->getMessage();
             }
 
@@ -105,13 +193,22 @@ abstract class ShopModelBase
 
         $this->extend('updateRefreshComponents', $refreshComponents);
 
+        /** @var HTTPRequest $request */
+        $request = Injector::inst()->get(HTTPRequest::class);
+
         $data = [
-            'code'         => $this->code,
-            'message'      => $this->message,
-            'cart_updated' => $this->cart_updated,
-            'refresh'      => $refreshComponents,
-            'quantity'     => $this->total_items,
-            'shipping_id'  => $this->shipping_id,
+            'request' => $request->httpMethod(),
+            'status'  => $this->status, // success, error
+            'method'  => $this->called_method,
+            'elapsed' => $this->elapsed,
+            'message' => $this->message,
+            'code'    => $this->code,
+            'data'    => [
+                'cart_updated' => $this->cart_updated,
+                'refresh'      => $refreshComponents,
+                'quantity'     => $this->total_items,
+                'shipping_id'  => $this->shipping_id,
+            ]
         ];
 
         $this->extend('onBeforeActionResponse', $data);

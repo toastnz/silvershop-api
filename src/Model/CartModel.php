@@ -106,6 +106,8 @@ class CartModel extends ShopModelBase
          * @var Product $product
          * ========================================*/
 
+        $this->called_method = 'addItem';
+
         if ($buyableID && is_numeric($buyableID)) {
 
             // Implement the same logic as on the AddProductForm and the VariationForm
@@ -120,7 +122,8 @@ class CartModel extends ShopModelBase
                     try {
                         $result = $this->cart->add($product, $quantity);
                     } catch (Exception $e) {
-                        $this->code         = 'error';
+                        $this->status       = 'error';
+                        $this->code         = 400;
                         $this->message      = $e->getMessage();
                         $this->cart_updated = false;
 
@@ -128,7 +131,7 @@ class CartModel extends ShopModelBase
                     }
 
                     if ($result === true || $result instanceof OrderItem) {
-                        $this->code    = 'success';
+                        $this->status  = 'success';
                         $this->message = _t(
                             'SHOP_API_MESSAGES.ItemAdded',
                             'Item{plural} added successfully.',
@@ -145,22 +148,26 @@ class CartModel extends ShopModelBase
                         $this->total_items = $result instanceof OrderItem ? $result->Order()->Items()->Quantity() : $quantity;
 
                     } else {
-                        $this->code         = 'error';
+                        $this->code         = 400;
+                        $this->status       = 'error';
                         $this->message      = $this->cart->getMessage();
                         $this->cart_updated = false;
                     }
                 } else {
-                    $this->code         = 'error';
+                    $this->code         = 404;
+                    $this->status       = 'error';
                     $this->message      = _t('SHOP_API_MESSAGES.CartNotFound', 'Cart not found');
                     $this->cart_updated = false;
                 }
             } else {
-                $this->code         = 'error';
+                $this->code         = 404;
+                $this->status       = 'error';
                 $this->message      = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
                 $this->cart_updated = false;
             }
         } else {
-            $this->code         = 'error';
+            $this->code         = 400;
+            $this->status       = 'error';
             $this->message      = _t('SHOP_API_MESSAGES.IncorrectIDParam', 'Missing or malformed ID');
             $this->cart_updated = false;
         }
@@ -185,6 +192,8 @@ class CartModel extends ShopModelBase
          * @var ProductModel $productModel
          * ========================================*/
 
+        $this->called_method = 'addVariation';
+
         if ($buyableID && is_numeric($buyableID)) {
 
             $productModel = ProductModel::create($buyableID);
@@ -198,7 +207,7 @@ class CartModel extends ShopModelBase
                     try {
                         $result = $this->cart->add($productVariation, $quantity);
                     } catch (Exception $e) {
-                        $this->code         = 'error';
+                        $this->status       = 'error';
                         $this->message      = $e->getMessage();
                         $this->cart_updated = false;
 
@@ -206,7 +215,7 @@ class CartModel extends ShopModelBase
                     }
 
                     if ($result === true || $result instanceof OrderItem) {
-                        $this->code    = 'success';
+                        $this->status  = 'success';
                         $this->message = _t(
                             'SHOP_API_MESSAGES.ItemAdded',
                             'Item{plural} added successfully.',
@@ -221,23 +230,27 @@ class CartModel extends ShopModelBase
                         ];
 
                     } else {
-                        $this->code         = 'error';
+                        $this->code         = 400;
+                        $this->status       = 'error';
                         $this->message      = $this->cart->getMessage();
                         $this->cart_updated = false;
                     }
                 } else {
-                    $this->code         = 'error';
+                    $this->code         = 400;
+                    $this->status       = 'error';
                     $this->message      = _t('SHOP_API_MESSAGES.VariationNotAvailable', 'That variation is not available');
                     $this->cart_updated = false;
                 }
             } else {
-                $this->code         = 'error';
+                $this->code         = 400;
+                $this->status       = 'error';
                 $this->message      = _t('SHOP_API_MESSAGES.IncorrectProductAttributesFormat', 'Missing [ProductAttributes] GET variable in correct format');
                 $this->cart_updated = false;
             }
 
         } else {
-            $this->code         = 'error';
+            $this->code         = 400;
+            $this->status       = 'error';
             $this->message      = _t('SHOP_API_MESSAGES.IncorrectIDParam', 'Missing or malformed ID');
             $this->cart_updated = false;
         }
@@ -253,6 +266,8 @@ class CartModel extends ShopModelBase
          * @var OrderCoupon $coupon
          * ========================================*/
 
+        $this->called_method = 'applyCoupon';
+
         // TODO: Check if Discounts module is installed
 
         $this->extend('onBeforeApplyCoupon');
@@ -262,7 +277,7 @@ class CartModel extends ShopModelBase
             $this->extend('updateCoupon', $coupon);
 
             if (!$coupon->validateOrder($this->order, ["CouponCode" => $code])) {
-                $this->code         = 'error';
+                $this->status       = 'error';
                 $this->message      = _t('SHOP_API_MESSAGES.CouponInvalid', 'Could not apply coupon.');
                 $this->cart_updated = false;
             } else {
@@ -270,7 +285,7 @@ class CartModel extends ShopModelBase
 
                 $this->order->getModifier("OrderDiscountModifier", true);
 
-                $this->code    = 'success';
+                $this->status  = 'success';
                 $this->message = _t('SHOP_API_MESSAGES.CouponApplied', 'Coupon applied.');
                 // Set the cart updated flag, and which components to refresh
                 $this->cart_updated = true;
@@ -280,7 +295,8 @@ class CartModel extends ShopModelBase
                 ];
             }
         } else {
-            $this->code         = 'error';
+            $this->status       = 'error';
+            $this->code         = 404;
             $this->message      = _t('SHOP_API_MESSAGES.CouponNotFound', 'Coupon could not be found');
             $this->cart_updated = false;
         }
@@ -297,12 +313,14 @@ class CartModel extends ShopModelBase
      */
     public function clear()
     {
+        $this->called_method = 'clear';
+
         $this->extend('onBeforeClearCart');
 
         if ($this->order->Items()->exists()) {
             $this->order->Items()->removeAll();
 
-            $this->code    = 'success';
+            $this->status  = 'success';
             $this->message = _t('SHOP_API_MESSAGES.CartCleared', 'Cart cleared');
             // Set the cart updated flag, and which components to refresh
             $this->cart_updated = true;
@@ -311,7 +329,8 @@ class CartModel extends ShopModelBase
                 'summary'
             ];
         } else {
-            $this->code         = 'error';
+            $this->status       = 'error';
+            $this->code         = 200;
             $this->message      = _t('SHOP_API_MESSAGES.CartAlreadyEmpty', 'Cart already empty');
             $this->cart_updated = false;
         }
@@ -328,6 +347,8 @@ class CartModel extends ShopModelBase
 
     public function updateShipping($zoneID)
     {
+        $this->called_method = 'updateShipping';
+
         // TODO: Check if the Shipping module is installed
 
         $this->extend('onBeforeUpdateShipping', $zoneID);
@@ -337,11 +358,11 @@ class CartModel extends ShopModelBase
         // search shipping methods that containe
 
         $this->order->setShippingMethod(ShippingMethod::get()->byID($shippingID));
-        $this->code    = 'success';
+        $this->status  = 'success';
         $this->message = _t('SHOP_API_MESSAGES.ShippingUpdated', 'Cart shipping updated');
         // Set the cart updated flag, and which components to refresh
         $this->cart_updated = true;
-        $this->shipping_id = $shippingID;
+        $this->shipping_id  = $shippingID;
         $this->refresh      = [
             'cart',
             'summary',
@@ -355,6 +376,8 @@ class CartModel extends ShopModelBase
 
     public function getShipping()
     {
+        $this->called_method = 'getShipping';
+
 //        Debug::dump($this->order->getShippingMethods());
 //        die();
         $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'Get current shipping method');
