@@ -6,6 +6,7 @@ use SilverShop\Cart\ShoppingCart;
 use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Injector\Injector;
 use Toast\ShopAPI\Model\CartItemModel;
 use Toast\ShopAPI\Model\CartModel;
 use Toast\ShopAPI\Model\ComponentModel;
@@ -36,16 +37,18 @@ class ShopAPIController extends Controller
         'shipping'
     ];
 
-    public function __construct()
-    {
-        $this->cart = CartModel::create();
-
-        parent::__construct();
-    }
+//    public function __construct()
+//    {
+//        parent::__construct();
+//
+//        $this->cart = CartModel::create();
+//    }
 
     public function init()
     {
         parent::init();
+
+        $this->cart = CartModel::create();
     }
 
     /* -----------------------------------------

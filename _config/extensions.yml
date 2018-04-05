@@ -1,22 +1,22 @@
 ---
 Name: shopapiextensions
 ---
-Product:
+SilverShop\Page\Product:
   extensions:
-    - ShopAPIProductExtension
+    - Toast\ShopAPI\Extension\ProductExtension
 
-ProductVariation:
+SilverShop\Model\Variation\Variation:
   extensions:
-    - ShopAPIVariationExtension
+    - Toast\ShopAPI\Extension\VariationExtension
 
-OrderItem:
+SilverShop\Model\OrderItem:
   extensions:
-    - ShopAPIOrderItemExtension
+    - Toast\ShopAPI\Extension\OrderItemExtension
 
-SiteTree:
+SilverStripe\CMS\Model\SiteTree:
   extensions:
-    - ShopAPISiteTreeExtension
+    - Toast\ShopAPI\Extension\SiteTreeExtension
 
-Order:
+SilverShop\Model\Order:
   extensions:
-    - ShopAPIOrderExtension
+    - Toast\ShopAPI\Extension\OrderExtension

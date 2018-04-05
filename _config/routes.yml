@@ -1,7 +1,9 @@
 ---
 Name: shopapiroutes
-After: framework/routes#coreroutes
+After:
+  - '#rootroutes'
+  - '#coreroutes'
 ---
-Director:
+SilverStripe\Control\Director:
   rules:
-    'shop-api' : 'ShopAPIController'
+    'shop-api': 'Toast\ShopAPI\Control\ShopAPIController'

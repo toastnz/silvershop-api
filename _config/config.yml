@@ -1,7 +1,7 @@
 ---
 Name: shopapiconfig
 ---
-ImageModel:
+Toast\ShopAPI\Model\ImageModel:
   image_sizes:
     small:
       width: 160

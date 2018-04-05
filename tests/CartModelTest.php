@@ -1,5 +1,9 @@
 <?php
 
+use PHPUnit\Framework\Assert;
+use SilverStripe\Dev\FunctionalTest;
+use Toast\ShopAPI\Model\ShopAPIConfig;
+
 /**
  * Class CartModelTest
  *

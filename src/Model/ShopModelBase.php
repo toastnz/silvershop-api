@@ -2,6 +2,7 @@
 
 namespace Toast\ShopAPI\Model;
 
+use Exception;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Order;
 use SilverShop\Page\CartPage;
@@ -54,9 +55,16 @@ abstract class ShopModelBase
         $this->total_items     = $this->order ? $this->order->Items()->Quantity() : 0;
 
         // retrieve the order
-        if (class_exists('ShoppingCart')) {
-            $this->order = ShoppingCart::curr();
-            $this->cart  = ShoppingCart::singleton();
+        if (class_exists(ShoppingCart::class)) {
+
+            try {
+
+                $this->cart  = ShoppingCart::singleton();
+                $this->order = $this->cart->current();
+            } catch (Exception $e) {
+                $this->code = 'error';
+                $this->message = $e->getMessage();
+            }
 
             // Set links
             $cartBase = Controller::join_links(Director::absoluteBaseURL(), CartPageController::config()->url_segment);
@@ -71,7 +79,7 @@ abstract class ShopModelBase
             }
             $this->checkout_link = $checkoutBase;
             // This means
-            if ($cartPage = SiteTree::get_one('CartPage')) {
+            if ($cartPage = SiteTree::get_one(CartPage::class)) {
                 if ($continue = $cartPage->ContinuePage()) {
                     $this->continue_link = $continue->AbsoluteLink();
                 }
@@ -113,7 +121,7 @@ abstract class ShopModelBase
 
     public function getSiteCurrency()
     {
-        $currency = singleton('ShopAPIConfig')->getSiteCurrency();
+        $currency = singleton(ShopAPIConfig::class)->getSiteCurrency();
 
         $this->extend('updateSiteCurrency', $currency);
 
@@ -122,7 +130,7 @@ abstract class ShopModelBase
 
     public function getSiteCurrencySymbol()
     {
-        $symbol = singleton('ShopAPIConfig')->getSiteCurrencySymbol();
+        $symbol = singleton(ShopAPIConfig::class)->getSiteCurrencySymbol();
 
         $this->extend('updateSiteCurrencySymbol', $symbol);
 

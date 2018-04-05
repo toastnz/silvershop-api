@@ -58,24 +58,25 @@ class ImageModel extends ShopModelBase
     public function getImageSizes()
     {
         $sizes = self::config()->get('image_sizes');
-
         $images = [];
 
-        foreach ($sizes as $size => $d) {
-            if (isset($d['width']) && isset($d['height'])) {
+        if (is_array($sizes)) {
+            foreach ($sizes as $size => $d) {
+                if (isset($d['width']) && isset($d['height'])) {
 
-                if ($this->image && $this->image->exists()) {
-                    $images[$size] = [
-                        'src' => $this->image->Fill($d['width'], $d['height'])->getAbsoluteURL(),
-                        'width' => $d['width'],
-                        'height' => $d['height']
-                    ];
-                } else {
-                    $images[$size] = [
-                        'src' => sprintf('http://placehold.it/%sx%s', $d['width'], $d['height']),
-                        'width' => $d['width'],
-                        'height' => $d['height']
-                    ];
+                    if ($this->image && $this->image->exists()) {
+                        $images[$size] = [
+                            'src' => $this->image->Fill($d['width'], $d['height'])->getAbsoluteURL(),
+                            'width' => $d['width'],
+                            'height' => $d['height']
+                        ];
+                    } else {
+                        $images[$size] = [
+                            'src' => sprintf('http://placehold.it/%sx%s', $d['width'], $d['height']),
+                            'width' => $d['width'],
+                            'height' => $d['height']
+                        ];
+                    }
                 }
             }
         }

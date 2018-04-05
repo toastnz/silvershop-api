@@ -116,36 +116,42 @@ class CartModel extends ShopModelBase
 
                 $this->extend('onBeforeAddItem', $product);
 
-                try {
-                    $result = $this->cart->add($product, $quantity);
-                } catch (Exception $e) {
-                    $this->code         = 'error';
-                    $this->message      = $e->getMessage();
-                    $this->cart_updated = false;
+                if ($this->cart) {
+                    try {
+                        $result = $this->cart->add($product, $quantity);
+                    } catch (Exception $e) {
+                        $this->code         = 'error';
+                        $this->message      = $e->getMessage();
+                        $this->cart_updated = false;
 
-                    return $this->getActionResponse();
-                }
+                        return $this->getActionResponse();
+                    }
 
-                if ($result === true || $result instanceof OrderItem) {
-                    $this->code    = 'success';
-                    $this->message = _t(
-                        'SHOP_API_MESSAGES.ItemAdded',
-                        'Item{plural} added successfully.',
-                        ['plural' => $quantity == 1 ? '' : 's']
-                    );
-                    // Set the cart updated flag, and which components to refresh
-                    $this->cart_updated = true;
-                    $this->refresh      = [
-                        'cart',
-                        'summary',
-                        'shippingmethod'
-                    ];
-                    // Set new total items
-                    $this->total_items = $result instanceof OrderItem ? $result->Order()->Items()->Quantity() : $quantity;
+                    if ($result === true || $result instanceof OrderItem) {
+                        $this->code    = 'success';
+                        $this->message = _t(
+                            'SHOP_API_MESSAGES.ItemAdded',
+                            'Item{plural} added successfully.',
+                            ['plural' => $quantity == 1 ? '' : 's']
+                        );
+                        // Set the cart updated flag, and which components to refresh
+                        $this->cart_updated = true;
+                        $this->refresh      = [
+                            'cart',
+                            'summary',
+                            'shippingmethod'
+                        ];
+                        // Set new total items
+                        $this->total_items = $result instanceof OrderItem ? $result->Order()->Items()->Quantity() : $quantity;
 
+                    } else {
+                        $this->code         = 'error';
+                        $this->message      = $this->cart->getMessage();
+                        $this->cart_updated = false;
+                    }
                 } else {
                     $this->code         = 'error';
-                    $this->message      = $this->cart->getMessage();
+                    $this->message      = _t('SHOP_API_MESSAGES.CartNotFound', 'Cart not found');
                     $this->cart_updated = false;
                 }
             } else {
