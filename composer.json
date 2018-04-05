@@ -18,7 +18,7 @@
     ],
     "require": {
         "silverstripe/recipe-cms": "^1.0.3",
-        "silvershop/core": "3.x-dev"
+        "silvershop/core": "^3@dev"
     },
     "require-dev": {
         "phpunit/PHPUnit": "~4.8"
