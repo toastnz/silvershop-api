@@ -2,6 +2,11 @@
 
 namespace Toast\ShopAPI\Extension;
 
+use SilverShop\Page\Product;
+use SilverStripe\Control\Controller;
+use SilverStripe\ORM\DataExtension;
+use Toast\ShopAPI\Model\ShopAPIConfig;
+
 /**
  * Class ProductExtension
  *

@@ -2,6 +2,10 @@
 
 namespace Toast\ShopAPI\Model;
 
+use Omnipay\Common\Currency;
+use SilverShop\Model\Modifiers\OrderModifier;
+use SilverStripe\Core\Config\Config;
+
 /**
  * Class ModifierModel
  */
@@ -44,7 +48,7 @@ class ModifierModel extends ShopModelBase
                 $this->price = $unitValue;
 
                 // Format
-                $nicePrice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $unitValue);
+                $nicePrice = sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $unitValue);
 
                 $this->extend('updateDisplayPrice', $nicePrice, $unitValue);
 

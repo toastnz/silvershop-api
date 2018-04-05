@@ -2,11 +2,22 @@
 
 namespace Toast\ShopAPI\Model;
 
+use SilverShop\Extension\ShopConfigExtension;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Extensible;
+use SilverStripe\Core\Injector\Injectable;
+
 /**
  * Class ShopAPIConfig
  */
-class ShopAPIConfig extends Object
+class ShopAPIConfig
 {
+    use Extensible;
+    use Injectable;
+    use Configurable;
+
     private static $api_endpoint = 'shop-api';
 
     public static function getApiUrl()
@@ -16,7 +27,7 @@ class ShopAPIConfig extends Object
 
     public function getSiteCurrency()
     {
-        $currency = ShopConfig::get_site_currency();
+        $currency = ShopConfigExtension::get_site_currency();
 
         $this->extend('updateSiteCurrency', $currency);
 

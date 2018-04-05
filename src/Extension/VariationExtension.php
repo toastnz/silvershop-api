@@ -2,10 +2,13 @@
 
 namespace Toast\ShopAPI\Extension;
 
+use SilverShop\Model\Variation\Variation;
+use SilverStripe\ORM\DataExtension;
+
 /**
  * Class VariationExtension
  *
- * @property ProductVariation $owner
+ * @property Variation $owner
  */
 class VariationExtension extends DataExtension
 {

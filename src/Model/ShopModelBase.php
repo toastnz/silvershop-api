@@ -2,11 +2,28 @@
 
 namespace Toast\ShopAPI\Model;
 
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Model\Order;
+use SilverShop\Page\CartPage;
+use SilverShop\Page\CartPageController;
+use SilverShop\Page\CheckoutPage;
+use SilverShop\Page\CheckoutPageController;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Extensible;
+use SilverStripe\Core\Injector\Injectable;
+
 /**
  * Class ShopModelBase
  */
-abstract class ShopModelBase extends Object
+abstract class ShopModelBase
 {
+    use Extensible;
+    use Injectable;
+    use Configurable;
+
     /** @var Order $order */
     protected $order;
 
@@ -42,13 +59,13 @@ abstract class ShopModelBase extends Object
             $this->cart  = ShoppingCart::singleton();
 
             // Set links
-            $cartBase = Controller::join_links(Director::absoluteBaseURL(), CartPage_Controller::config()->url_segment);
+            $cartBase = Controller::join_links(Director::absoluteBaseURL(), CartPageController::config()->url_segment);
             if ($page = CartPage::get()->first()) {
                 $cartBase = $page->AbsoluteLink();
             }
             $this->cart_link = $cartBase;
 
-            $checkoutBase = Controller::join_links(Director::absoluteBaseURL(), CheckoutPage_Controller::config()->url_segment);
+            $checkoutBase = Controller::join_links(Director::absoluteBaseURL(), CheckoutPageController::config()->url_segment);
             if ($page = CheckoutPage::get()->first()) {
                 $checkoutBase = $page->AbsoluteLink();
             }
@@ -62,8 +79,6 @@ abstract class ShopModelBase extends Object
         } else {
             user_error('Missing Silvershop module', E_USER_WARNING);
         }
-
-        parent::__construct();
     }
 
     public function get()

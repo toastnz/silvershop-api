@@ -2,6 +2,8 @@
 
 namespace Toast\ShopAPI\Model;
 
+use SilverStripe\Assets\Image;
+
 /**
  * Class ImageModel
  */
@@ -25,7 +27,7 @@ class ImageModel extends ShopModelBase
 
         if ($id && is_numeric($id)) {
             // Get the image object
-            $image = Image::get_by_id('Image', $id);
+            $image = Image::get_by_id(Image::class, $id);
 
             if ($image && $image->exists()) {
 

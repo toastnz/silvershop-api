@@ -2,6 +2,15 @@
 
 namespace Toast\ShopAPI\Model;
 
+use Exception;
+use Omnipay\Common\Currency;
+use SilverShop\Model\OrderItem;
+use SilverShop\Model\Variation\Variation;
+use SilverShop\Page\Product;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+
 /**
  * Class CartItemModel
  */
@@ -10,7 +19,7 @@ class CartItemModel extends ShopModelBase
     /** @var OrderItem $item */
     protected $item;
 
-    /** @var Product|ProductVariation $buyable */
+    /** @var Product|Variation $buyable */
     protected $buyable;
 
     protected $endpoint;
@@ -66,7 +75,7 @@ class CartItemModel extends ShopModelBase
 
         if ($id && is_numeric($id)) {
             // Get an order item
-            $this->item = OrderItem::get_by_id('OrderItem', $id);
+            $this->item = OrderItem::get_by_id(OrderItem::class, $id);
 
             if ($this->item->exists()) {
 
@@ -90,8 +99,8 @@ class CartItemModel extends ShopModelBase
                 $this->total_price = $totalValue;
 
                 // Format
-                $this->price_nice       = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $unitValue);
-                $this->total_price_nice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $totalValue);
+                $this->price_nice       = sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $unitValue);
+                $this->total_price_nice = sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $totalValue);
 
                 $this->endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/item', $this->item->ID);
 
@@ -107,7 +116,7 @@ class CartItemModel extends ShopModelBase
                     $this->remove_quantity_link = Controller::join_links($this->endpoint, 'addQuantity');
 
                     // Add variables
-                    $variations = ($this->buyable instanceof ProductVariation) ? $this->buyable->Product()->Variations() : $this->buyable->Variations();
+                    $variations = ($this->buyable instanceof Variation) ? $this->buyable->Product()->Variations() : $this->buyable->Variations();
 
                     if ($variations) {
                         foreach ($variations as $variation) {
@@ -130,7 +139,7 @@ class CartItemModel extends ShopModelBase
                         ];
                     }
 
-                    if (!($this->buyable instanceof ProductVariation)) {
+                    if (!($this->buyable instanceof Variation)) {
                         if ($this->buyable->ProductCategories()) {
                             foreach ($this->buyable->ProductCategories() as $category) {
                                 $this->categories[] = [

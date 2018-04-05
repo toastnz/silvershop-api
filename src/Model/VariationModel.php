@@ -2,12 +2,15 @@
 
 namespace Toast\ShopAPI\Model;
 
+use SilverShop\Model\Variation\Variation;
+use SilverStripe\ORM\DataObject;
+
 /**
  * Class VariationModel
  */
 class VariationModel extends ShopModelBase
 {
-    /** @var ProductVariation $variation */
+    /** @var Variation $variation */
     protected $variation;
 
     protected $id;
@@ -29,19 +32,19 @@ class VariationModel extends ShopModelBase
     public function __construct($id)
     {
         /** =========================================
-         * @var ProductVariation $variation
+         * @var Variation $variation
          * ========================================*/
 
         parent::__construct();
 
         if ($id && is_numeric($id)) {
             // Get an order item
-            $this->variation = DataObject::get_by_id('ProductVariation', $id);
+            $this->variation = DataObject::get_by_id(Variation::class, $id);
 
             if ($this->variation->exists()) {
                 $this->id         = $this->variation->ID;
                 $this->title      = $this->variation->Title;
-                $this->price_nice = $this->variation->dbObject('Price') ->Nice();
+                $this->price_nice = $this->variation->dbObject('Price')->Nice();
                 $this->price      = $this->variation->Price;
                 $this->sku        = $this->variation->InternalItemID;
             }

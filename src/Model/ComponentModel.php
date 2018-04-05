@@ -2,6 +2,8 @@
 
 namespace Toast\ShopAPI\Model;
 
+use SilverShop\Checkout\Component\CheckoutComponent;
+
 /**
  * Class ComponentModel
  */

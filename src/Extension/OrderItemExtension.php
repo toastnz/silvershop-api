@@ -2,12 +2,17 @@
 
 namespace Toast\ShopAPI\Extension;
 
+use SilverShop\Model\OrderItem;
+use SilverStripe\Control\Controller;
+use SilverStripe\ORM\DataExtension;
+use Toast\ShopAPI\Model\ShopAPIConfig;
+
 /**
  * Class OrderItemExtension
  *
  * @property OrderItem $owner
  */
-class ShopAPIOrderItemExtension extends DataExtension
+class OrderItemExtension extends DataExtension
 {
     public function getAddOneUrl()
     {

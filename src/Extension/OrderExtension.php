@@ -2,6 +2,10 @@
 
 namespace Toast\ShopAPI\Extension;
 
+use SilverShop\Model\Order;
+use SilverStripe\ORM\DataExtension;
+use Toast\ShopAPI\Model\ShopAPIConfig;
+
 /**
  * Class OrderExtension
  *

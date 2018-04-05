@@ -2,12 +2,19 @@
 
 namespace Toast\ShopAPI\Model;
 
+use SilverShop\Model\Variation\Variation;
+use SilverShop\Page\Product;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\DataObject;
+
 /**
  * Class ProductModel
  */
 class ProductModel extends ShopModelBase
 {
-    /** @var Product|ProductVariation|ShopAPIVariationExtension|ProductVariationsExtension $buyable */
+    /** @var Product|Variation $buyable */
     protected $buyable;
 
     protected $endpoint;
@@ -39,22 +46,22 @@ class ProductModel extends ShopModelBase
     public function __construct($id)
     {
         /** =========================================
-         * @var Product|ProductVariation $buyable
-         * @var ProductVariation         $variation
+         * @var Product|Variation $buyable
+         * @var Variation         $variation
          * ========================================*/
 
         parent::__construct();
 
         if ($id && is_numeric($id)) {
             // Get an order item
-            $this->buyable = DataObject::get_by_id('Product', $id);
+            $this->buyable = DataObject::get_by_id(Product::class, $id);
 
             if ($this->buyable && $this->buyable->exists()) {
                 // Set the initial properties
                 $this->id         = $this->buyable->ID;
                 $this->title      = $this->buyable->Title;
                 $this->price      = $this->buyable->getPrice();
-                $this->price_nice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $this->price);
+                $this->price_nice = sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $this->price);
                 $this->link       = $this->buyable->AbsoluteLink();
                 $this->sku        = $this->buyable->InternalItemID;
 
@@ -99,7 +106,7 @@ class ProductModel extends ShopModelBase
                     ];
                 }
 
-                if (!($this->buyable instanceof ProductVariation)) {
+                if (!($this->buyable instanceof Variation)) {
                     if ($this->buyable->ProductCategories()) {
                         foreach ($this->buyable->ProductCategories() as $category) {
                             $this->categories[] = [
@@ -121,7 +128,7 @@ class ProductModel extends ShopModelBase
             return null;
         }
 
-        $variations = ProductVariation::get()->filter("ProductID", $this->id);
+        $variations = Variation::get()->filter("ProductID", $this->id);
 
         foreach ($attributes as $typeid => $valueid) {
             if (!is_numeric($typeid) || !is_numeric($valueid)) {
@@ -129,8 +136,8 @@ class ProductModel extends ShopModelBase
             } //ids MUST be numeric
             $alias      = "A$typeid";
             $variations = $variations->innerJoin(
-                "ProductVariation_AttributeValues",
-                "\"ProductVariation\".\"ID\" = \"$alias\".\"ProductVariationID\"",
+                "Variation_AttributeValues",
+                "\"Variation\".\"ID\" = \"$alias\".\"VariationID\"",
                 $alias
             )->where("\"$alias\".\"ProductAttributeValueID\" = $valueid");
         }

@@ -2,6 +2,15 @@
 
 namespace Toast\ShopAPI\Model;
 
+use Exception;
+use Omnipay\Common\Currency;
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Model\OrderItem;
+use SilverShop\Page\Product;
+use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\DataObject;
+
 /**
  * Class CartModel
  */
@@ -54,9 +63,9 @@ class CartModel extends ShopModelBase
             $this->id                  = $this->order->ID;
             $this->quantity            = $this->order->Items()->Quantity();
             $this->subtotal_price      = number_format($this->order->SubTotal(), 2);
-            $this->subtotal_price_nice = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $this->order->SubTotal());
+            $this->subtotal_price_nice = sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $this->order->SubTotal());
             $this->total_price         = number_format($this->order->Total(), 2);
-            $this->total_price_nice    = sprintf('%s%.2f', Config::inst()->get('Currency', 'currency_symbol'), $this->order->Total());
+            $this->total_price_nice    = sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $this->order->Total());
 
             // Add items
             if ($this->order->Items()) {
@@ -100,7 +109,7 @@ class CartModel extends ShopModelBase
         if ($buyableID && is_numeric($buyableID)) {
 
             // Implement the same logic as on the AddProductForm and the VariationForm
-            $product = DataObject::get_by_id('Product', $buyableID);
+            $product = DataObject::get_by_id(Product::class, $buyableID);
 
             if ($product && $product->exists()) {
                 $quantity = $quantity > 0 ? $quantity : 1;
@@ -238,6 +247,8 @@ class CartModel extends ShopModelBase
          * @var OrderCoupon $coupon
          * ========================================*/
 
+        // TODO: Check if Discounts module is installed
+
         $this->extend('onBeforeApplyCoupon');
 
         if ($coupon = OrderCoupon::get_by_code($code)) {
@@ -249,7 +260,7 @@ class CartModel extends ShopModelBase
                 $this->message      = _t('SHOP_API_MESSAGES.CouponInvalid', 'Could not apply coupon.');
                 $this->cart_updated = false;
             } else {
-                Session::set("cart.couponcode", strtoupper($code));
+                Controller::curr()->getRequest()->getSession()->set("cart.couponcode", strtoupper($code));
 
                 $this->order->getModifier("OrderDiscountModifier", true);
 
@@ -311,6 +322,8 @@ class CartModel extends ShopModelBase
 
     public function updateShipping($zoneID)
     {
+        // TODO: Check if the Shipping module is installed
+
         $this->extend('onBeforeUpdateShipping', $zoneID);
 
         // find the shiping option with the zone $zoneID added to it

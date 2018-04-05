@@ -1,6 +1,15 @@
 <?php
 
-namespace Toast\Control;
+namespace Toast\ShopAPI\Control;
+
+use SilverShop\Cart\ShoppingCart;
+use SilverShop\Page\Product;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTPRequest;
+use Toast\ShopAPI\Model\CartItemModel;
+use Toast\ShopAPI\Model\CartModel;
+use Toast\ShopAPI\Model\ComponentModel;
+use Toast\ShopAPI\Model\ProductModel;
 
 /**
  * Class ShopAPIController
@@ -43,16 +52,16 @@ class ShopAPIController extends Controller
      * Handlers
      * ----------------------------------------*/
 
-    public function index(SS_HTTPRequest $request)
+    public function index(HTTPRequest $request)
     {
         return $this->processResponse($this->cart->get());
     }
 
     /**
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      * @return string
      */
-    public function promocode(SS_HTTPRequest $request)
+    public function promocode(HTTPRequest $request)
     {
         /** =========================================
          * @var OrderCoupon $coupon
@@ -66,16 +75,18 @@ class ShopAPIController extends Controller
             }
         }
 
+        // TODO: Add error response for module not installed
+
         return $this->processResponse($this->cart->get());
     }
 
     /**
      * Controls Order Items (quantities)
      *
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      * @return string
      */
-    public function item(SS_HTTPRequest $request)
+    public function item(HTTPRequest $request)
     {
         $id = $request->param('ID');
 
@@ -105,7 +116,7 @@ class ShopAPIController extends Controller
     }
 
 
-    public function shipping(SS_HTTPRequest $request)
+    public function shipping(HTTPRequest $request)
     {
         $cart = $this->cart;
         // process action
@@ -123,12 +134,12 @@ class ShopAPIController extends Controller
 
 
     /**
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      * @return string
      *
      * Checkout component model
      */
-    public function component(SS_HTTPRequest $request)
+    public function component(HTTPRequest $request)
     {
         $type = $request->param('ID');
 
@@ -144,10 +155,10 @@ class ShopAPIController extends Controller
     /**
      * Controls Product functions (get, add to cart)
      *
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      * @return string
      */
-    public function product(SS_HTTPRequest $request)
+    public function product(HTTPRequest $request)
     {
         $id = $request->param('ID');
 
@@ -170,12 +181,12 @@ class ShopAPIController extends Controller
         return $this->processResponse();
     }
 
-    public function clear(SS_HTTPRequest $request)
+    public function clear(HTTPRequest $request)
     {
         return $this->processResponse($this->cart->clear());
     }
 
-    public function ping(SS_HTTPRequest $request)
+    public function ping(HTTPRequest $request)
     {
         $hash = $this->cart->getHash() != $request->getVar('hash') ? $this->cart->getHash() : $request->getVar('hash');
 
