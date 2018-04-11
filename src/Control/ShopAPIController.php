@@ -11,6 +11,7 @@ use Toast\ShopAPI\Model\CartItemModel;
 use Toast\ShopAPI\Model\CartModel;
 use Toast\ShopAPI\Model\ComponentModel;
 use Toast\ShopAPI\Model\ProductModel;
+use Toast\ShopAPI\Model\VariationModel;
 
 /**
  * Class ShopAPIController
@@ -34,7 +35,8 @@ class ShopAPIController extends Controller
         'component',
         'promocode',
         'ping',
-        'shipping'
+        'shipping',
+        'variation'
     ];
 
 //    public function __construct()
@@ -183,6 +185,30 @@ class ShopAPIController extends Controller
             }
         }
 
+        return $this->processResponse();
+    }
+
+    /**
+     * Controls Varr functions (get, add to cart)
+     *
+     * @param HTTPRequest $request
+     * @return string
+     */
+    public function variation(HTTPRequest $request)
+    {
+        $id = $request->param('ID');
+
+        if ($id && is_numeric($id)) {
+            $variation = VariationModel::create($id);
+
+            $cart = $this->cart;
+
+            // process action
+            switch ($request->param('OtherAction')) {
+                default:
+                    return $this->processResponse($variation->get());
+            }
+        }
         return $this->processResponse();
     }
 
