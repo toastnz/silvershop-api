@@ -14,6 +14,7 @@ class VariationModel extends ShopModelBase
     protected $variation;
 
     protected $id;
+    protected $product_id;
     protected $image;
     protected $title;
     protected $price;
@@ -22,6 +23,7 @@ class VariationModel extends ShopModelBase
 
     protected static $fields = [
         'id',
+        'product_id',
         'image',
         'title',
         'price',
@@ -43,6 +45,7 @@ class VariationModel extends ShopModelBase
 
             if ($this->variation->exists()) {
                 $this->id         = $this->variation->ID;
+                $this->product_id = $this->variation->ProductID;
                 $this->title      = $this->variation->Title;
                 $this->price_nice = $this->variation->dbObject('Price')->Nice();
                 $this->price      = $this->variation->Price;
