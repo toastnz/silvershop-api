@@ -11,6 +11,7 @@ use Toast\ShopAPI\Model\CartItemModel;
 use Toast\ShopAPI\Model\CartModel;
 use Toast\ShopAPI\Model\ComponentModel;
 use Toast\ShopAPI\Model\ProductModel;
+use Toast\ShopAPI\Model\VariationModel;
 
 /**
  * Class ShopAPIController
