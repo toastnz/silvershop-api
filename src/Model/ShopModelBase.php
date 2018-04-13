@@ -9,6 +9,8 @@ use SilverShop\Page\CartPage;
 use SilverShop\Page\CartPageController;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;
+use Wedderburn\WishList\WishListPage;
+use Wedderburn\WishList\WishListPageController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
@@ -165,7 +167,14 @@ abstract class ShopModelBase
             if ($page = CheckoutPage::get()->first()) {
                 $checkoutBase = $page->AbsoluteLink();
             }
-            $this->checkout_link = $checkoutBase;
+
+            $wishListBase = Controller::join_links(Director::absoluteBaseURL(), WishListPageController::config()->url_segment);
+
+            if ($page = WishListPage::get()->first()) {
+
+                $wishListBase = $page->AbsoluteLink();
+            }
+            $this->wish_list_link = $wishListBase;
             // This means
             if ($cartPage = SiteTree::get_one(CartPage::class)) {
                 if ($continue = $cartPage->ContinuePage()) {

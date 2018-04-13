@@ -12,6 +12,7 @@ use Toast\ShopAPI\Model\CartModel;
 use Toast\ShopAPI\Model\ComponentModel;
 use Toast\ShopAPI\Model\ProductModel;
 use Toast\ShopAPI\Model\VariationModel;
+use Toast\ShopAPI\Model\WishListModel;
 
 /**
  * Class ShopAPIController
@@ -29,6 +30,7 @@ class ShopAPIController extends Controller
 
     private static $allowed_actions = [
         'cart',
+        'wishlist',
         'item',
         'product',
         'clear',
@@ -51,6 +53,7 @@ class ShopAPIController extends Controller
         parent::init();
 
         $this->cart = CartModel::create();
+        $this->wishlist = WishListModel::create();
     }
 
     /* -----------------------------------------
@@ -94,7 +97,6 @@ class ShopAPIController extends Controller
     public function item(HTTPRequest $request)
     {
         $id = $request->param('ID');
-
         if ($id && is_numeric($id)) {
             $item = CartItemModel::create($id);
 
@@ -168,11 +170,11 @@ class ShopAPIController extends Controller
     public function product(HTTPRequest $request)
     {
         $id = $request->param('ID');
-
         if ($id && is_numeric($id)) {
             $product = ProductModel::create($id);
 
             $cart = $this->cart;
+
 
             // process action
             switch ($request->param('OtherAction')) {
@@ -180,6 +182,12 @@ class ShopAPIController extends Controller
                     return $this->processResponse($cart->addItem($id, $request->getVar('quantity')));
                 case 'addVariation':
                     return $this->processResponse($cart->addVariation($id, $request->getVar('quantity'), $request->getVar('ProductAttributes')));
+                case 'toggle':
+                    // toggle on wishlist
+                    return $this->processResponse($cart->toggleItem($id));
+                case 'move':
+                    // toggle on wishlist
+                    return $this->processResponse($cart->moveItem($id));
                 default:
                     return $this->processResponse($product->get());
             }
@@ -215,6 +223,26 @@ class ShopAPIController extends Controller
     public function clear(HTTPRequest $request)
     {
         return $this->processResponse($this->cart->clear());
+    }
+
+    public function wishList(HTTPRequest $request)
+    {
+        // get wishlist
+        $wishlist = $this->wishlist;
+        // process action
+        switch ($request->param('OtherID')) {
+            case 'toggle':
+                // toggle on wishlist
+                return $this->processResponse($wishlist->toggleItem($request->param('ID')));
+            case 'move':
+                // toggle on wishlist
+                return $this->processResponse($wishlist->moveItem($request->param('ID')));
+            default:
+                return $this->processResponse($wishlist->get());
+        }
+
+
+        //toggle item
     }
 
     public function ping(HTTPRequest $request)

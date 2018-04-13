@@ -26,6 +26,8 @@ class ProductModel extends ShopModelBase
     protected $price;
     protected $price_nice;
     protected $add_link;
+    protected $wish_list_link;
+    protected $in_wish_list;
     protected $sku;
     protected $categories = [];
     protected $variations = [];
@@ -38,6 +40,8 @@ class ProductModel extends ShopModelBase
         'price_nice',
         'sku',
         'add_link',
+        'wish_list_link',
+        'in_wish_list',
         'product_image',
         'categories',
         'variations'
@@ -89,6 +93,7 @@ class ProductModel extends ShopModelBase
                     $this->add_link = Controller::join_links($this->endpoint, 'addVariation') . '?' . http_build_query($attrQuery);
                 } else {
                     $this->add_link = Controller::join_links($this->endpoint, 'add');
+                    $this->wish_list_link = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/wishlist/product', $this->id, 'toggle');
                 }
 
                 // Set the image
