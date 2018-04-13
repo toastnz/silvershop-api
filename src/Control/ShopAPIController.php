@@ -230,15 +230,26 @@ class ShopAPIController extends Controller
 
     public function processResponse($data = [])
     {
-        if ($this->request->param('Action') != 'ping' && !empty($this->request->param('Action'))) {
-            if ($cart = ShoppingCart::curr()) {
-                $cart->setField('Hash', $this->cart->getHash());
-                $cart->write();
-            }
-        }
+        $elapsed = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
 
         $this->extend('updateResponseData', $data);
 
-        return json_encode($data, JSON_HEX_QUOT | JSON_HEX_TAG);
+        /** @var HTTPRequest $request */
+        $request = Injector::inst()->get(HTTPRequest::class);
+
+        $cart = $this->cart;
+
+        $response = [
+            'request' => $request->httpMethod(),
+            'status'  => $cart->getStatus(), // success, error
+            'method'  => $cart->getCalledMethod(),
+            'elapsed' => number_format($elapsed * 1000, 0) . 'ms',
+            'message' => $cart->getMessage(),
+            'code'    => $cart->getCode(),
+            'data'    => $data
+        ];
+
+
+        return json_encode($response, JSON_HEX_QUOT | JSON_HEX_TAG);
     }
 }

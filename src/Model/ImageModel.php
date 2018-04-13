@@ -3,6 +3,8 @@
 namespace Toast\ShopAPI\Model;
 
 use SilverStripe\Assets\Image;
+use SilverStripe\Assets\Image_Backend;
+use SilverStripe\Core\Config\Config;
 
 /**
  * Class ImageModel
@@ -14,11 +16,13 @@ class ImageModel extends ShopModelBase
 
     protected $image_id;
     protected $alt;
+    protected $orientation;
     protected $sizes = [];
 
     protected static $fields = [
         'alt',
-        'sizes'
+        'sizes',
+        'orientation'
     ];
 
     public function __construct($id)
@@ -34,6 +38,18 @@ class ImageModel extends ShopModelBase
                 $this->extend('updateImage', $image);
 
                 $this->image = $image;
+
+                switch ($this->image->getOrientation()) {
+                    case Image_Backend::ORIENTATION_LANDSCAPE:
+                        $this->orientation = 'wider';
+                        break;
+                    case Image_Backend::ORIENTATION_PORTRAIT:
+                        $this->orientation = 'taller';
+                        break;
+                    default:
+                        $this->orientation = 'square';
+                        break;
+                }
 
                 // Set the initial properties
                 $this->image_id = $this->image->ID;
@@ -57,7 +73,10 @@ class ImageModel extends ShopModelBase
      */
     public function getImageSizes()
     {
-        $sizes = self::config()->get('image_sizes');
+        $sizes = Config::inst()->get(ImageModel::class, 'image_sizes');
+
+        $cropType = Config::inst()->get(ImageModel::class, 'crop_type') ?: 'FitMax';
+
         $images = [];
 
         if (is_array($sizes)) {
@@ -66,14 +85,14 @@ class ImageModel extends ShopModelBase
 
                     if ($this->image && $this->image->exists()) {
                         $images[$size] = [
-                            'src' => $this->image->Fill($d['width'], $d['height'])->getAbsoluteURL(),
-                            'width' => $d['width'],
-                            'height' => $d['height']
+                            'src'         => $this->image->{$cropType}($d['width'], $d['height'])->getAbsoluteURL(),
+                            'width'       => $d['width'],
+                            'height'      => $d['height']
                         ];
                     } else {
                         $images[$size] = [
-                            'src' => sprintf('http://placehold.it/%sx%s', $d['width'], $d['height']),
-                            'width' => $d['width'],
+                            'src'    => sprintf('http://placehold.it/%sx%s', $d['width'], $d['height']),
+                            'width'  => $d['width'],
                             'height' => $d['height']
                         ];
                     }

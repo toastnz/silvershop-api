@@ -36,7 +36,7 @@ class CartItemModel extends ShopModelBase
     protected $remove_all_link;
     protected $price;
     protected $price_nice;
-    protected $quantity;
+    protected $total_items;
     protected $total_price;
     protected $total_price_nice;
     protected $product_image;
@@ -56,7 +56,7 @@ class CartItemModel extends ShopModelBase
         'remove_all_link',
         'price',
         'price_nice',
-        'quantity',
+        'total_items',
         'total_price',
         'total_price_nice',
         'product_image',
@@ -83,9 +83,9 @@ class CartItemModel extends ShopModelBase
                 $this->buyable = $this->item->Buyable();
 
                 // Set the initial properties
-                $this->item_id  = $this->item->ID;
-                $this->title    = $this->item->TableTitle();
-                $this->quantity = $this->item->Quantity;
+                $this->item_id     = $this->item->ID;
+                $this->title       = $this->item->TableTitle();
+                $this->total_items = $this->item->Quantity;
 
                 // Set prices
                 $unitValue  = $this->item->UnitPrice();
@@ -163,7 +163,7 @@ class CartItemModel extends ShopModelBase
      */
     public function getQuantity()
     {
-        return $this->quantity;
+        return $this->total_items;
     }
 
     /**

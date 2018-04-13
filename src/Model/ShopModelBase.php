@@ -196,24 +196,28 @@ abstract class ShopModelBase
         /** @var HTTPRequest $request */
         $request = Injector::inst()->get(HTTPRequest::class);
 
+        $elapsed = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
+
         $data = [
+            'cart_updated' => $this->cart_updated,
+            'refresh'      => $refreshComponents,
+            'quantity'     => $this->total_items,
+            'shipping_id'  => $this->shipping_id,
+        ];
+
+        $response = [
             'request' => $request->httpMethod(),
             'status'  => $this->status, // success, error
             'method'  => $this->called_method,
-            'elapsed' => $this->elapsed,
+            'elapsed' => number_format($elapsed * 1000, 0) . 'ms',
             'message' => $this->message,
             'code'    => $this->code,
-            'data'    => [
-                'cart_updated' => $this->cart_updated,
-                'refresh'      => $refreshComponents,
-                'quantity'     => $this->total_items,
-                'shipping_id'  => $this->shipping_id,
-            ]
+            'data'    => $data
         ];
 
-        $this->extend('onBeforeActionResponse', $data);
+        $this->extend('onBeforeActionResponse', $response);
 
-        return $data;
+        return $response;
     }
 
     public function getSiteCurrency()
@@ -234,5 +238,27 @@ abstract class ShopModelBase
         return $symbol;
     }
 
+    /** -----------------------------------------
+     * Getters
+     * ----------------------------------------*/
 
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    public function getCalledMethod()
+    {
+        return $this->called_method;
+    }
+
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    public function getCode()
+    {
+        return $this->code;
+    }
 }

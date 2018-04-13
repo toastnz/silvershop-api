@@ -6,6 +6,7 @@ use Exception;
 use Omnipay\Common\Currency;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\OrderItem;
+use SilverShop\ORM\FieldType\ShopCurrency;
 use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
@@ -18,7 +19,7 @@ class CartModel extends ShopModelBase
 {
     protected $id;
     protected $hash;
-    protected $quantity;
+    protected $total_items;
     protected $total_price;
     protected $total_price_nice;
     protected $subtotal_price;
@@ -29,20 +30,16 @@ class CartModel extends ShopModelBase
     protected $modifiers = [];
 
     protected static $fields = [
-        'code',
-        'message',
         'id',
-        'hash',
         'currency',
         'currency_symbol',
-        'quantity',
+        'total_items',
         'total_price',
         'total_price_nice',
         'subtotal_price',
         'subtotal_price_nice',
         'cart_link',
         'checkout_link',
-        'continue_link',
         'items',
         'modifiers',
         'shipping_id',
@@ -61,11 +58,11 @@ class CartModel extends ShopModelBase
 
             $this->hash                = hash('sha256', ShoppingCart::curr()->LastEdited . $this->order->ID);
             $this->id                  = $this->order->ID;
-            $this->quantity            = $this->order->Items()->Quantity();
+            $this->total_items         = $this->order->Items()->Quantity();
             $this->subtotal_price      = number_format($this->order->SubTotal(), 2);
-            $this->subtotal_price_nice = sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $this->order->SubTotal());
+            $this->subtotal_price_nice = sprintf('%s%.2f', Config::inst()->get(ShopCurrency::class, 'currency_symbol'), $this->order->SubTotal());
             $this->total_price         = number_format($this->order->Total(), 2);
-            $this->total_price_nice    = sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $this->order->Total());
+            $this->total_price_nice    = sprintf('%s%.2f', Config::inst()->get(ShopCurrency::class, 'currency_symbol'), $this->order->Total());
 
             // Add items
             if ($this->order->Items()) {
@@ -83,7 +80,7 @@ class CartModel extends ShopModelBase
                 }
             }
         } else {
-            $this->quantity            = 0;
+            $this->total_items         = 0;
             $this->total_price         = 0;
             $this->total_price_nice    = 0;
             $this->subtotal_price      = 0;
