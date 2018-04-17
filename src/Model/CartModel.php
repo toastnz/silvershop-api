@@ -11,6 +11,11 @@ use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Dev\Debug;
 
 /**
  * Class CartModel
@@ -27,6 +32,12 @@ class CartModel extends ShopModelBase
     protected $cart_link;
     protected $checkout_link;
     protected $items = [];
+    protected $wish_list_link;
+    protected $wish_list_items = [];
+    protected $total_wish_list_items;
+    protected $compare_list_link;
+    protected $compare_list_items = [];
+    protected $total_compare_list_items;
     protected $modifiers = [];
 
     protected static $fields = [
@@ -41,6 +52,12 @@ class CartModel extends ShopModelBase
         'cart_link',
         'checkout_link',
         'items',
+        'wish_list_link',
+        'wish_list_items',
+        'total_wish_list_items',
+        'compare_list_link',
+        'compare_list_items',
+        'total_compare_list_items',
         'modifiers',
         'shipping_id',
     ];
@@ -51,6 +68,29 @@ class CartModel extends ShopModelBase
 
         $date       = date_create();
         $this->hash = hash('sha256', $date->format('U'));
+
+
+        if ($this->getWishList()) {
+            foreach ($this->getWishList() as $item) {
+                $this->wish_list_items[] = WishListItemModel::create($item)->get();
+            }
+            $this->total_wish_list_items = count($this->getWishList());
+        }else{
+            $this->wish_list_items = [];
+            $this->total_wish_list_items = Null;
+        }
+
+
+        if ($this->getCompareList()) {
+            foreach ($this->getCompareList() as $item) {
+                $this->compare_list_items[] = CompareListItemModel::create($item)->get();
+            }
+            $this->total_compare_list_items = count($this->getCompareList());
+        }else{
+            $this->compare_list_items = [];
+            $this->total_compare_list_items = Null;
+        }
+
 
         if ($this->order) {
 
@@ -386,5 +426,24 @@ class CartModel extends ShopModelBase
             'shipping'
         ];
         return $this->getActionResponse();
+    }
+
+
+    public function getWishList()
+    {
+        $this->called_method = 'toggle';
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+        $wishList = $session->get('wishList');
+        return $wishList;
+    }
+
+    public function getCompareList()
+    {
+        $this->called_method = 'toggle';
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+        $wishList = $session->get('compareList');
+        return $wishList;
     }
 }
