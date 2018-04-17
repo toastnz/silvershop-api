@@ -6,6 +6,8 @@ use Exception;
 use SilverShop\Cart\ShoppingCart;
 use SilverShop\Model\Order;
 use SilverShop\Page\CartPage;
+use \WishListPage;
+use \ComparePage;
 use SilverShop\Page\CartPageController;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;
@@ -166,12 +168,30 @@ abstract class ShopModelBase
                 $checkoutBase = $page->AbsoluteLink();
             }
             $this->checkout_link = $checkoutBase;
+
+
             // This means
             if ($cartPage = SiteTree::get_one(CartPage::class)) {
                 if ($continue = $cartPage->ContinuePage()) {
                     $this->continue_link = $continue->AbsoluteLink();
                 }
             }
+
+
+            //wishlistLink
+            $wishListBase = Controller::join_links(Director::absoluteBaseURL(), CheckoutPageController::config()->url_segment);
+            if ($page = WishListPage::get()->first()) {
+                $wishListBase = $page->AbsoluteLink();
+            }
+            $this->wish_list_link = $wishListBase;
+
+            //CompareLink
+            $compareBase = Controller::join_links(Director::absoluteBaseURL(), CheckoutPageController::config()->url_segment);
+            if ($page = ComparePage::get()->first()) {
+                $compareBase = $page->AbsoluteLink();
+            }
+            $this->compare_list_link = $compareBase;
+
         } else {
             user_error('Missing Silvershop module', E_USER_WARNING);
         }

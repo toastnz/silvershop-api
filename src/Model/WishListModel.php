@@ -11,16 +11,11 @@ use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\View\ArrayData;
-use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Dev\Debug;
 
 /**
- * Class CartModel
+ * Class WishListModel
  */
-class CartModel extends ShopModelBase
+class WishListModel extends ShopModelBase
 {
     protected $id;
     protected $hash;
@@ -30,14 +25,9 @@ class CartModel extends ShopModelBase
     protected $subtotal_price;
     protected $subtotal_price_nice;
     protected $cart_link;
+    protected $wish_list_link;
     protected $checkout_link;
     protected $items = [];
-    protected $wish_list_link;
-    protected $wish_list_items = [];
-    protected $total_wish_list_items;
-    protected $compare_link;
-    protected $compare_items = [];
-    protected $total_compare_items;
     protected $modifiers = [];
 
     protected static $fields = [
@@ -50,14 +40,9 @@ class CartModel extends ShopModelBase
         'subtotal_price',
         'subtotal_price_nice',
         'cart_link',
+        'wish_list_link',
         'checkout_link',
         'items',
-        'wish_list_link',
-        'wish_list_items',
-        'total_wish_list_items',
-        'compare_list_link',
-        'compare_list_items',
-        'total_compare_list_items',
         'modifiers',
         'shipping_id',
     ];
@@ -66,58 +51,22 @@ class CartModel extends ShopModelBase
     {
         parent::__construct();
 
-        $date       = date_create();
-        $this->hash = hash('sha256', $date->format('U'));
+        $this->hash                = 'hash';
+        $this->id                  = 'id';
+        $this->total_items         = 12;
+        $this->subtotal_price      = 'test';
+        $this->subtotal_price_nice = 'test';
+        $this->total_price         = 'test';
+        $this->total_price_nice    = 'test';
 
 
-        if ($this->getWishList()) {
-            foreach ($this->getWishList() as $item) {
-                $this->wish_list_items[] = WishListItemModel::create($item)->get();
-            }
-        }
-        $this->total_wish_list_items = count($this->getWishList());
-
-        if ($this->getCompareList()) {
-            foreach ($this->getCompareList() as $item) {
-                $this->compare_list_items[] = CompareListItemModel::create($item->ID)->get();
-            }
-        }
-        $this->total_compare_list_items = $this->getCompareList()->count();
-
-        if ($this->order) {
-
-            $this->extend('updateCartOrder', $this->order);
-
-            $this->hash                = hash('sha256', ShoppingCart::curr()->LastEdited . $this->order->ID);
-            $this->id                  = $this->order->ID;
-            $this->total_items         = $this->order->Items()->Quantity();
-            $this->subtotal_price      = number_format($this->order->SubTotal(), 2);
-            $this->subtotal_price_nice = sprintf('%s%.2f', Config::inst()->get(ShopCurrency::class, 'currency_symbol'), $this->order->SubTotal());
-            $this->total_price         = number_format($this->order->Total(), 2);
-            $this->total_price_nice    = sprintf('%s%.2f', Config::inst()->get(ShopCurrency::class, 'currency_symbol'), $this->order->Total());
-
-            // Add items
-            if ($this->order->Items()) {
-                foreach ($this->order->Items() as $item) {
-                    $this->items[] = CartItemModel::create($item->ID)->get();
-                }
-            }
-
-            // Add modifiers
-            if ($this->order->Modifiers()) {
-                foreach ($this->order->Modifiers() as $modifier) {
-                    if ($modifier->ShowInTable()) {
-                        $this->modifiers[] = ModifierModel::create($modifier->ID)->get();
-                    }
-                }
-            }
-        } else {
-            $this->total_items         = 0;
-            $this->total_price         = 0;
-            $this->total_price_nice    = 0;
-            $this->subtotal_price      = 0;
-            $this->subtotal_price_nice = 0;
-        }
+        $this->items[] = WishListItemModel::create(63)->get();
+        $this->items[] = 'test';
+//        if ($this->order->Items()) {
+//            foreach ($this->order->Items() as $item) {
+//                $this->items[] = CartItemModel::create($item->ID)->get();
+//            }
+//        }
 
         $this->extend('onAfterSetup');
     }
@@ -420,23 +369,20 @@ class CartModel extends ShopModelBase
         return $this->getActionResponse();
     }
 
-
     public function getWishList()
     {
-        $this->called_method = 'toggle';
-        $request = Injector::inst()->get(HTTPRequest::class);
-        $session = $request->getSession();
-        $wishList = $session->get('wishList');
-        return $wishList;
-    }
+        $this->called_method = 'getShipping';
 
-    public function getCompareList()
-    {
-        return new ArrayList([
-            new ArrayData([
-                'Title' => ' ',
-                'ID' => 65,
-            ])
-        ]);
+//        Debug::dump($this->order->getShippingMethods());
+//        die();
+        $this->message = _t('SHOP_API_MESSAGES.GetShipping', 'Get current shipping method');
+        // Set the cart updated flag, and which components to refresh
+        $this->cart_updated = false;
+        $this->refresh      = [
+            'cart',
+            'summary',
+            'shipping'
+        ];
+        return $this->getActionResponse();
     }
 }

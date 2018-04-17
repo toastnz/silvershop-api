@@ -9,6 +9,8 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use Toast\ShopAPI\Model\CartItemModel;
 use Toast\ShopAPI\Model\CartModel;
+use Toast\ShopAPI\Model\WishListItemModel;
+use Toast\ShopAPI\Model\WishListModel;
 use Toast\ShopAPI\Model\ComponentModel;
 use Toast\ShopAPI\Model\ProductModel;
 use Toast\ShopAPI\Model\VariationModel;
@@ -36,7 +38,8 @@ class ShopAPIController extends Controller
         'promocode',
         'ping',
         'shipping',
-        'variation'
+        'variation',
+        'wishlist'
     ];
 
 //    public function __construct()
@@ -120,6 +123,19 @@ class ShopAPIController extends Controller
         }
 
         return $this->processResponse();
+    }
+
+    public function wishlist(HTTPRequest $request)
+    {
+        $id = $request->param('ID');
+        $item = WishListItemModel::create($id);
+        // process action
+        switch ($request->param('OtherID')) {
+            case 'toggle':
+                return $this->processResponse($item->addOrRemoveItems(true));
+            default:
+                return $this->processResponse($this->cart->get());
+        }
     }
 
 
