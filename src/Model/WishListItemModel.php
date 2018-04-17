@@ -56,7 +56,7 @@ class WishListItemModel extends ShopModelBase
             // Get an order item
             $this->item = Product::get_by_id(Product::class, $id);
 
-            if ($this->item->exists()) {
+            if ($this->item) {
 
                 // Set the initial properties
                 $this->item_id     = $this->item->ID;

@@ -35,9 +35,9 @@ class CartModel extends ShopModelBase
     protected $wish_list_link;
     protected $wish_list_items = [];
     protected $total_wish_list_items;
-    protected $compare_link;
-    protected $compare_items = [];
-    protected $total_compare_items;
+    protected $compare_list_link;
+    protected $compare_list_items = [];
+    protected $total_compare_list_items;
     protected $modifiers = [];
 
     protected static $fields = [
@@ -74,15 +74,23 @@ class CartModel extends ShopModelBase
             foreach ($this->getWishList() as $item) {
                 $this->wish_list_items[] = WishListItemModel::create($item)->get();
             }
+            $this->total_wish_list_items = count($this->getWishList());
+        }else{
+            $this->wish_list_items = [];
+            $this->total_wish_list_items = Null;
         }
-        $this->total_wish_list_items = count($this->getWishList());
+
 
         if ($this->getCompareList()) {
             foreach ($this->getCompareList() as $item) {
-                $this->compare_list_items[] = CompareListItemModel::create($item->ID)->get();
+                $this->compare_list_items[] = CompareListItemModel::create($item)->get();
             }
+            $this->total_compare_list_items = count($this->getCompareList());
+        }else{
+            $this->compare_list_items = [];
+            $this->total_compare_list_items = Null;
         }
-        $this->total_compare_list_items = $this->getCompareList()->count();
+
 
         if ($this->order) {
 
@@ -432,11 +440,10 @@ class CartModel extends ShopModelBase
 
     public function getCompareList()
     {
-        return new ArrayList([
-            new ArrayData([
-                'Title' => ' ',
-                'ID' => 65,
-            ])
-        ]);
+        $this->called_method = 'toggle';
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+        $wishList = $session->get('compareList');
+        return $wishList;
     }
 }

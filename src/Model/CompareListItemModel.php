@@ -10,6 +10,11 @@ use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Dev\Debug;
 
 /**
  * Class CartItemModel
@@ -51,14 +56,14 @@ class CompareListItemModel extends ShopModelBase
             // Get an order item
             $this->item = Product::get_by_id(Product::class, $id);
 
-            if ($this->item->exists()) {
+            if ($this->item) {
 
                 // Set the initial properties
                 $this->item_id     = $this->item->ID;
                 $this->product_id = $this->item->ID;
                 $this->title       = $this->item->Title;
                 $this->link          = $this->item->AbsoluteLink();
-                $this->endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/wishlist', $this->item->ID);
+                $this->endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/compare', $this->item->ID);
                 $this->toggle_link          = Controller::join_links($this->endpoint, 'toggle');
             }
         }
@@ -68,62 +73,42 @@ class CompareListItemModel extends ShopModelBase
 
     public function addOrRemoveItems($add = true, $quantity = 1)
     {
-        $this->called_method = 'addOrRemoveItems';
 
-        if ($this->buyable) {
-            try {
-                $result = $add ? $this->cart->add($this->buyable, $quantity) : $this->cart->remove($this->buyable, $quantity);
-            } catch (Exception $e) {
-                $this->status       = 'error';
-                $this->message      = $e->getMessage();
-                $this->cart_updated = false;
-
-                return $this->getActionResponse();
+        $this->called_method = 'toggle';
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+        $compareList = $session->get('compareList');
+        if ($this->item) {
+            // check if item already in wishlist
+            if (!$compareList){
+                $session->set('compareList', []);
+                $wishList = $session->get('compareList');
             }
 
-            if ($result === true || $result instanceof OrderItem) {
+            // if already exists remove it
+            if (in_array($this->item->ID, $compareList)){
+                $key = array_search ($this->item->ID, $compareList);
+                unset($compareList[$key]);
+                $this->code         = 200;
+                $this->status       = 'success';
+                $this->message      = _t('SHOP_API_MESSAGES.Productremoved', 'Product removed');
+            }else{
+                $compareList[] = $this->item->ID;
 
+                $this->code         = 200;
+                $this->status       = 'success';
+                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product added');
 
-                if ($add) {
-                    $this->extend('onAfterAddItem', $quantity, $result);
-                } else {
-                    $this->extend('onAfterRemoveItem', $quantity, $result);
-                }
-
-                $this->status = 'success';
-                if ($add) {
-                    $this->message = _t(
-                        'SHOP_API_MESSAGES.ItemAdded',
-                        'Item{plural} added successfully.',
-                        ['plural' => $quantity == 1 ? '' : 's']
-                    );
-                } else {
-                    $this->message = _t(
-                        'SHOP_API_MESSAGES.ItemRemoved',
-                        'Item{plural} removed from cart.',
-                        ['plural' => $quantity == 1 ? '' : 's']
-                    );
-                }
-                $this->message = $this->cart->getMessage();
-                // Set the cart updated flag, and which components to refresh
-                $this->cart_updated = true;
-                $this->refresh      = [
-                    'cart',
-                    'summary',
-                    'shippingmethod'
-                ];
-                $this->total_items  = $this->order ? $this->order->Items()->Quantity() : $quantity;
-            } else {
-                $this->code         = 400;
-                $this->status       = 'error';
-                $this->message      = $this->cart->getMessage();
-                $this->cart_updated = false;
             }
+
+            $compareList = array_unique($compareList);
+            $session->set('compareList', $compareList);
+
+
         } else {
             $this->code         = 404;
             $this->status       = 'error';
             $this->message      = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
-            $this->cart_updated = false;
         }
 
         $this->extend('onAddOrRemoveItems');
