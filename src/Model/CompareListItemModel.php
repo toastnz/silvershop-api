@@ -82,7 +82,7 @@ class CompareListItemModel extends ShopModelBase
             // check if item already in wishlist
             if (!$compareList){
                 $session->set('compareList', []);
-                $wishList = $session->get('compareList');
+                $compareList = $session->get('compareList');
             }
 
             // if already exists remove it
