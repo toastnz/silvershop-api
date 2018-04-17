@@ -116,4 +116,45 @@ class WishListItemModel extends ShopModelBase
         return $this->getActionResponse();
     }
 
+    public function move($add = true, $quantity = 1)
+    {
+
+        $this->called_method = 'move';
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+        $wishList = $session->get('wishList');
+        if ($this->item) {
+
+            // if already exists remove it
+            if (in_array($this->item->ID, $wishList)){
+                $key = array_search ($this->item->ID, $wishList);
+                unset($wishList[$key]);
+                $this->cart->add($this->item, 1);
+                $this->code         = 200;
+                $this->status       = 'success';
+                $this->message      = _t('SHOP_API_MESSAGES.Productmoved', 'Product moved to cart');
+            }else{
+                $wishList[] = $this->item->ID;
+
+                $this->code         = 200;
+                $this->status       = 'success';
+                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product does not exist in wishlist');
+
+            }
+
+            $wishList = array_unique($wishList);
+            $session->set('wishList', $wishList);
+
+
+        } else {
+            $this->code         = 404;
+            $this->status       = 'error';
+            $this->message      = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
+        }
+
+        $this->extend('onAddOrRemoveItems');
+
+        return $this->getActionResponse();
+    }
+
 }

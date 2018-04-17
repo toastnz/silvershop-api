@@ -134,6 +134,8 @@ class ShopAPIController extends Controller
         switch ($request->param('OtherID')) {
             case 'toggle':
                 return $this->processResponse($item->addOrRemoveItems(true));
+            case 'move':
+                return $this->processResponse($item->move(true));
             default:
                 return $this->processResponse($this->cart->get());
         }
