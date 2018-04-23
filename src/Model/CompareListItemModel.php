@@ -91,13 +91,13 @@ class CompareListItemModel extends ShopModelBase
                 unset($compareList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.Productremoved', 'Product removed');
+                $this->message      = _t('SHOP_API_MESSAGES.Productremoved', 'Product removed from compare list');
             }else{
                 $compareList[] = $this->item->ID;
 
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product added');
+                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product added to the compare list');
 
             }
 

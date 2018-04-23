@@ -91,13 +91,13 @@ class WishListItemModel extends ShopModelBase
                 unset($wishList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.Productremoved', 'Product removed');
+                $this->message      = _t('SHOP_API_MESSAGES.Productremoved', 'Product removed from wishlist');
             }else{
                 $wishList[] = $this->item->ID;
 
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product added');
+                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product added to wishlist');
 
             }
 
@@ -136,7 +136,7 @@ class WishListItemModel extends ShopModelBase
             }else{
                 $wishList[] = $this->item->ID;
 
-                $this->code         = 200;
+                $this->code         = 404;
                 $this->status       = 'success';
                 $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product does not exist in wishlist');
 

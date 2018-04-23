@@ -14,6 +14,7 @@ use Toast\ShopAPI\Model\CompareListItemModel;
 use Toast\ShopAPI\Model\ComponentModel;
 use Toast\ShopAPI\Model\ProductModel;
 use Toast\ShopAPI\Model\VariationModel;
+use SilverStripe\Dev\Debug;
 
 /**
  * Class ShopAPIController
@@ -130,6 +131,7 @@ class ShopAPIController extends Controller
     {
         $id = $request->param('ID');
         $item = WishListItemModel::create($id);
+        $action  = $request->param('OtherID');
         // process action
         switch ($request->param('OtherID')) {
             case 'toggle':
@@ -270,13 +272,20 @@ class ShopAPIController extends Controller
         $request = Injector::inst()->get(HTTPRequest::class);
 
         $cart = $this->cart;
+        if ($request->latestParam('Action') == 'wishlist'){
+            $message = $data['message'];
+            $method =$data['method'];
+        }else{
+            $method = $cart->getCalledMethod();
+            $message = $cart->getMessage();
+        }
 
         $response = [
             'request' => $request->httpMethod(),
             'status'  => $cart->getStatus(), // success, error
-            'method'  => $cart->getCalledMethod(),
+            'method'  => $method,
             'elapsed' => number_format($elapsed * 1000, 0) . 'ms',
-            'message' => $cart->getMessage(),
+            'message' => $message,
             'code'    => $cart->getCode(),
             'data'    => $data
         ];

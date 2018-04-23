@@ -69,7 +69,6 @@ class CartModel extends ShopModelBase
         $date       = date_create();
         $this->hash = hash('sha256', $date->format('U'));
 
-
         if ($this->getWishList()) {
             foreach ($this->getWishList() as $item) {
                 $this->wish_list_items[] = WishListItemModel::create($item)->get();
@@ -431,7 +430,7 @@ class CartModel extends ShopModelBase
 
     public function getWishList()
     {
-        $this->called_method = 'toggle';
+//        $this->called_method = 'toggle';
         $request = Injector::inst()->get(HTTPRequest::class);
         $session = $request->getSession();
         $wishList = $session->get('wishList');
@@ -440,7 +439,7 @@ class CartModel extends ShopModelBase
 
     public function getCompareList()
     {
-        $this->called_method = 'toggle';
+//        $this->called_method = 'toggle';
         $request = Injector::inst()->get(HTTPRequest::class);
         $session = $request->getSession();
         $wishList = $session->get('compareList');
