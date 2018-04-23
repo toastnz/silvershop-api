@@ -272,7 +272,7 @@ class ShopAPIController extends Controller
         $request = Injector::inst()->get(HTTPRequest::class);
 
         $cart = $this->cart;
-        if ($request->latestParam('Action') == 'wishlist'){
+        if ($request->latestParam('Action') == 'wishlist' || $request->latestParam('Action') == 'comparelist'){
             $message = $data['message'];
             $method =$data['method'];
         }else{
