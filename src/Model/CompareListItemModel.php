@@ -91,13 +91,13 @@ class CompareListItemModel extends ShopModelBase
                 unset($compareList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.Productremoved', 'Product removed from compare list');
+                $this->message      = _t('SHOP_API_MESSAGES.CompareListItemRemoved', 'Item removed form the compare list successfully.');
             }else{
                 $compareList[] = $this->item->ID;
 
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product added to the compare list');
+                $this->message      = _t('SHOP_API_MESSAGES.CompareListItemAdded', 'Item added to compare list successfully.');
 
             }
 
@@ -108,7 +108,7 @@ class CompareListItemModel extends ShopModelBase
         } else {
             $this->code         = 404;
             $this->status       = 'error';
-            $this->message      = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
+            $this->message      = _t('SHOP_API_MESSAGES.CompareListItemNotFound', 'Item does not exist in compare list');
         }
 
         $this->extend('onAddOrRemoveItems');

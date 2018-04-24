@@ -208,12 +208,15 @@ class ShopAPIController extends Controller
 
             $cart = $this->cart;
 
+
+
             // process action
             switch ($request->param('OtherAction')) {
                 case 'add':
                     return $this->processResponse($cart->addItem($id, $request->getVar('quantity')));
                 case 'addVariation':
-                    return $this->processResponse($cart->addVariation($id, $request->getVar('quantity'), $request->getVar('ProductAttributes')));
+                    $productAttributes = explode("_", $request->getVar('ProductAttributes'));
+                    return $this->processResponse($cart->addVariation($id, $request->getVar('quantity'), $productAttributes));
                 default:
                     return $this->processResponse($product->get());
             }
@@ -278,6 +281,15 @@ class ShopAPIController extends Controller
         }else{
             $method = $cart->getCalledMethod();
             $message = $cart->getMessage();
+        }
+
+        if ( $message == '' || $message == Null ){
+            if (array_key_exists('message', $data)){
+                $message = $data['message'];
+            }else{
+                $message = '';
+            }
+
         }
 
         $response = [

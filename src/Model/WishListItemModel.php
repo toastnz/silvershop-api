@@ -91,13 +91,13 @@ class WishListItemModel extends ShopModelBase
                 unset($wishList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.Productremoved', 'Product removed from wishlist');
+                $this->message      = _t('SHOP_API_MESSAGES.WishListItemRemoved', 'Item removed to wishlist successfully.');
             }else{
                 $wishList[] = $this->item->ID;
 
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product added to wishlist');
+                $this->message      = _t('SHOP_API_MESSAGES.WishListItemAdded', 'Item added to wishlist successfully.');
 
             }
 
@@ -132,13 +132,16 @@ class WishListItemModel extends ShopModelBase
                 $this->cart->add($this->item, 1);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.Productmoved', 'Product moved to cart');
+                $this->message      = _t('SHOP_API_MESSAGES.WishListItemMoved', 'Item moved from wishlist to cart successfully.');
             }else{
                 $wishList[] = $this->item->ID;
+                $this->cart->remove($this->item);
+                $wishList = array_unique($wishList);
+                $session->set('wishList', $wishList);
 
-                $this->code         = 404;
+                $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.ProductAdded', 'Product does not exist in wishlist');
+                $this->message      = _t('SHOP_API_MESSAGES.WishListItemMoved', 'Item moved from your cart to your wish list successfully.');
 
             }
 
