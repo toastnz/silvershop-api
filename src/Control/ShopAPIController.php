@@ -9,6 +9,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use Toast\ShopAPI\Model\CartItemModel;
 use Toast\ShopAPI\Model\CartModel;
+use Toast\ShopAPI\Model\ShopModelBase;
 use Toast\ShopAPI\Model\WishListItemModel;
 use Toast\ShopAPI\Model\CompareListItemModel;
 use Toast\ShopAPI\Model\ComponentModel;
@@ -125,12 +126,13 @@ class ShopAPIController extends Controller
         $id = $request->param('ID');
         $item = WishListItemModel::create($id);
         $action  = $request->param('OtherID');
+
         // process action
-        switch ($request->param('OtherID')) {
+        switch ($action) {
             case 'toggle':
-                return $this->processResponse($item->addOrRemoveItems(true));
+                return $this->processResponse($item->addOrRemoveItems());
             case 'move':
-                return $this->processResponse($item->move(true));
+                return $this->processResponse($item->move());
             default:
                 return $this->processResponse($this->cart->get());
         }
@@ -143,7 +145,7 @@ class ShopAPIController extends Controller
         // process action
         switch ($request->param('OtherID')) {
             case 'toggle':
-                return $this->processResponse($item->addOrRemoveItems(true));
+                return $this->processResponse($item->addOrRemoveItems());
             default:
                 return $this->processResponse($this->cart->get());
         }
@@ -268,33 +270,29 @@ class ShopAPIController extends Controller
         $request = Injector::inst()->get(HTTPRequest::class);
 
         $cart = $this->cart;
-        if ($request->latestParam('Action') == 'wishlist' || $request->latestParam('Action') == 'comparelist'){
-            $message = $data['message'];
-            $method =$data['method'];
-        }else{
-            $method = $cart->getCalledMethod();
-            $message = $cart->getMessage();
-        }
 
-        if ( $message == '' || $message == Null ){
-            if (array_key_exists('message', $data)){
-                $message = $data['message'];
-            }else{
-                $message = '';
-            }
+        if (isset($data['model'])) {
+            /** @var ShopModelBase $model */
+            $model = $data['model'];
 
+            $cart->setStatus($model->getStatus());
+            $cart->setCalledMethod($model->getCalledMethod());
+            $cart->setMessage($model->getMessage());
+            $cart->setCode($model->getCode());
+
+            // Remove model from response
+            unset($data['model']);
         }
 
         $response = [
             'request' => $request->httpMethod(),
             'status'  => $cart->getStatus(), // success, error
-            'method'  => $method,
+            'method'  => $cart->getCalledMethod(),
             'elapsed' => number_format($elapsed * 1000, 0) . 'ms',
-            'message' => $message,
+            'message' => $cart->getMessage(),
             'code'    => $cart->getCode(),
             'data'    => $data
         ];
-
 
         return json_encode($response, JSON_HEX_QUOT | JSON_HEX_TAG);
     }

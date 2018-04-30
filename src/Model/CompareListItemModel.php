@@ -74,7 +74,7 @@ class CompareListItemModel extends ProductModel
         $this->extend('onAfterSetup');
     }
 
-    public function addOrRemoveItems($add = true, $quantity = 1)
+    public function addOrRemoveItems()
     {
 
         $this->called_method = 'toggle';
@@ -94,13 +94,19 @@ class CompareListItemModel extends ProductModel
                 unset($compareList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.CompareListItemRemoved', 'Item removed form the compare list successfully.');
+                $this->message      = _t('SHOP_API_MESSAGES.CompareListItemRemoved', 'Item removed from the compare list successfully.');
+                $this->refresh      = [
+                    'comparelist'
+                ];
             }else{
                 $compareList[] = $this->item->ID;
 
                 $this->code         = 200;
                 $this->status       = 'success';
                 $this->message      = _t('SHOP_API_MESSAGES.CompareListItemAdded', 'Item added to compare list successfully.');
+                $this->refresh      = [
+                    'comparelist'
+                ];
 
             }
 

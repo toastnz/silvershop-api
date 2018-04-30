@@ -213,31 +213,17 @@ abstract class ShopModelBase
 
         $this->extend('updateRefreshComponents', $refreshComponents);
 
-        /** @var HTTPRequest $request */
-        $request = Injector::inst()->get(HTTPRequest::class);
-
-        $elapsed = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
-
         $data = [
             'cart_updated' => $this->cart_updated,
             'refresh'      => $refreshComponents,
             'quantity'     => $this->total_items,
             'shipping_id'  => $this->shipping_id,
+            'model'        => $this
         ];
 
-        $response = [
-            'request' => $request->httpMethod(),
-            'status'  => $this->status, // success, error
-            'method'  => $this->called_method,
-            'elapsed' => number_format($elapsed * 1000, 0) . 'ms',
-            'message' => $this->message,
-            'code'    => $this->code,
-            'data'    => $data
-        ];
+        $this->extend('onBeforeActionResponse', $data);
 
-        $this->extend('onBeforeActionResponse', $response);
-
-        return $response;
+        return $data;
     }
 
     public function getSiteCurrency()
@@ -280,5 +266,29 @@ abstract class ShopModelBase
     public function getCode()
     {
         return $this->code;
+    }
+
+    /** -----------------------------------------
+     * Setters
+     * ----------------------------------------*/
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
+    }
+
+    public function setCalledMethod($calledMethod)
+    {
+        $this->called_method = $calledMethod;
+    }
+
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
+
+    public function setCode($code)
+    {
+        $this->code = $code;
     }
 }
