@@ -19,28 +19,30 @@ use SilverStripe\Dev\Debug;
 /**
  * Class CartItemModel
  */
-class WishListItemModel extends ShopModelBase
+class WishListItemModel extends ProductModel
 {
-    /** @var OrderItem $item */
+    /** @var Product|Variation $item */
     protected $item;
 
-    /** @var Product|Variation $buyable */
-    protected $buyable;
-
-    protected $endpoint;
+    protected $toggle_link;
 
     protected $item_id;
     protected $product_id;
-    protected $title;
-    protected $link;
-    protected $toggle_link;
 
     protected static $fields = [
-        'item_id',
-        'product_id',
+        'id',
         'title',
         'link',
-        'toggle_link'
+        'price',
+        'price_nice',
+        'sku',
+        'add_link',
+        'product_image',
+        'categories',
+        'variations',
+        'item_id',
+        'product_id',
+        'toggle_link',
     ];
 
     public function __construct($id)
@@ -50,7 +52,7 @@ class WishListItemModel extends ShopModelBase
          * @var Currency $totalMoney
          * ========================================*/
 
-        parent::__construct();
+        parent::__construct($id);
 
         if ($id && is_numeric($id)) {
             // Get an order item
@@ -60,11 +62,11 @@ class WishListItemModel extends ShopModelBase
 
                 // Set the initial properties
                 $this->item_id     = $this->item->ID;
-                $this->product_id = $this->item->ID;
+                $this->product_id  = $this->item->ID;
                 $this->title       = $this->item->Title;
-                $this->link          = $this->item->AbsoluteLink();
-                $this->endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/wishlist', $this->item->ID);
-                $this->toggle_link          = Controller::join_links($this->endpoint, 'toggle');
+                $this->link        = $this->item->AbsoluteLink();
+                $this->endpoint    = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/wishlist', $this->item->ID);
+                $this->toggle_link = Controller::join_links($this->endpoint, 'toggle');
             }
         }
 
@@ -73,11 +75,12 @@ class WishListItemModel extends ShopModelBase
 
     public function addOrRemoveItems($add = true, $quantity = 1)
     {
-
         $this->called_method = 'toggle';
+
         $request = Injector::inst()->get(HTTPRequest::class);
         $session = $request->getSession();
         $wishList = $session->get('wishList');
+
         if ($this->item) {
             // check if item already in wishlist
             if (!$wishList){
@@ -118,11 +121,13 @@ class WishListItemModel extends ShopModelBase
 
     public function move($add = true, $quantity = 1)
     {
-
         $this->called_method = 'move';
+
+        /** @var HTTPRequest $request */
         $request = Injector::inst()->get(HTTPRequest::class);
         $session = $request->getSession();
         $wishList = $session->get('wishList');
+
         if ($this->item) {
 
             // if already exists remove it

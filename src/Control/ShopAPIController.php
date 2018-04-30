@@ -44,13 +44,6 @@ class ShopAPIController extends Controller
         'comparelist'
     ];
 
-//    public function __construct()
-//    {
-//        parent::__construct();
-//
-//        $this->cart = CartModel::create();
-//    }
-
     public function init()
     {
         parent::init();
