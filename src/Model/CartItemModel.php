@@ -34,6 +34,7 @@ class CartItemModel extends ShopModelBase
     protected $remove_link;
     protected $remove_quantity_link;
     protected $remove_all_link;
+    protected $internal_item_id;
     protected $price;
     protected $price_nice;
     protected $total_items;
@@ -54,6 +55,7 @@ class CartItemModel extends ShopModelBase
         'remove_link',
         'remove_quantity_link',
         'remove_all_link',
+        'internal_item_id',
         'price',
         'price_nice',
         'total_items',
@@ -84,6 +86,7 @@ class CartItemModel extends ShopModelBase
 
                 // Set the initial properties
                 $this->item_id     = $this->item->ID;
+                $this->internal_item_id = $this->item->InternalItemID;
                 $this->title       = $this->item->TableTitle();
                 $this->total_items = $this->item->Quantity;
 
