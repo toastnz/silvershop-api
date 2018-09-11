@@ -125,4 +125,68 @@ class CompareListItemModel extends ProductModel
         return $this->getActionResponse();
     }
 
+    public function addOrRemoveVariations()
+    {
+
+        $this->called_method = 'toggle';
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+        $id = $request->param('ID');
+        $compareList = $session->get('compareList_variations');
+        $this->item = Variation::get_by_id(Variation::class, $id);
+
+        if ($this->item) {
+
+            // Set the initial properties
+            $this->item_id     = $this->item->ID;
+            $this->product_id  = $this->item->ID;
+            $this->title       = $this->item->Title;
+            $this->link        = $this->item->AbsoluteLink();
+            $this->endpoint    = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/compare', $this->item->ID);
+            $this->toggle_link = Controller::join_links($this->endpoint, 'toggle');
+        }
+        if ($this->item) {
+            // check if item already in wishlist
+            if (!$compareList){
+                $session->set('compareList_variations', []);
+                $compareList = $session->get('compareList_variations');
+            }
+
+            // if already exists remove it
+            if (in_array($this->item->ID, $compareList)){
+                $key = array_search ($this->item->ID, $compareList);
+                unset($compareList[$key]);
+                $this->code         = 200;
+                $this->status       = 'success';
+                $this->message      = _t('SHOP_API_MESSAGES.CompareListItemRemoved', 'Item removed from the compare list successfully.');
+                $this->refresh      = [
+                    'compareList_variations'
+                ];
+            }else{
+                $compareList[] = $this->item->ID;
+
+                $this->code         = 200;
+                $this->status       = 'success';
+                $this->message      = _t('SHOP_API_MESSAGES.CompareListItemAdded', 'Item added to compare list successfully.');
+                $this->refresh      = [
+                    'compareList_variations'
+                ];
+
+            }
+
+            $compareList = array_unique($compareList);
+            $session->set('compareList_variations', $compareList);
+
+
+        } else {
+            $this->code         = 404;
+            $this->status       = 'error';
+            $this->message      = _t('SHOP_API_MESSAGES.CompareListItemNotFound', 'Item does not exist in compare list');
+        }
+
+        $this->extend('onAddOrRemoveVariations');
+
+        return $this->getActionResponse();
+    }
+
 }
