@@ -86,7 +86,7 @@ class CartItemModel extends ShopModelBase
 
                 // Set the initial properties
                 $this->item_id     = $this->item->ID;
-                $this->internal_item_id = $this->item->InternalItemID;
+                $this->internal_item_id = $this->item->Product()->InternalItemID;
                 $this->title       = $this->item->TableTitle();
                 $this->total_items = $this->item->Quantity;
 
