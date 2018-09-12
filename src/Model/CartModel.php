@@ -442,7 +442,32 @@ class CartModel extends ShopModelBase
 //        $this->called_method = 'toggle';
         $request = Injector::inst()->get(HTTPRequest::class);
         $session = $request->getSession();
-        $wishList = $session->get('compareList');
-        return $wishList;
+        $results = new ArrayList();
+        $compareList = $session->get('compareList');
+        $compareListVariations = $session->get('compareList_variations');
+
+        if ($compareList){
+            foreach ($compareList as $item) {
+                if (Product::get()->byID($item)) {
+
+                }else{
+
+                    $key = array_search ($item, $compareList);
+//                Debug::dump($key);
+                    unset($compareList[$key]);
+                }
+            }
+        }
+        if ($compareListVariations){
+            foreach ($compareList as $item) {
+                if (Variation::get()->byID($item)) {
+//                    $compareCount++;
+                }else{
+                    $key = array_search ($item, $compareListVariations);
+                    unset($compareListVariations[$key]);
+                }
+            }
+        }
+        return $result = array_merge($compareList, $compareListVariations);;
     }
 }
