@@ -16,6 +16,7 @@ use SilverStripe\View\ArrayData;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\Debug;
+use SilverShop\Model\Variation\Variation;
 
 /**
  * Class CartModel

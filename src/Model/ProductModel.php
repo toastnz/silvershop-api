@@ -77,7 +77,11 @@ class ProductModel extends ShopModelBase
                 if (!empty($this->variations)) {
                     // Save price range
                     $priceRange  = $this->buyable->PriceRange();
-                    $this->price = $priceRange->Min . ' - ' . $priceRange->Max;
+                    if ($priceRange){
+                        $this->price = $priceRange->Min . ' - ' . $priceRange->Max;
+                    }else{
+                        $this->price = 'POA';
+                    }
 
                     // set up query
                     $attributes = $this->buyable->VariationAttributeTypes();
