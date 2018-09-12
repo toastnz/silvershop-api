@@ -469,6 +469,13 @@ class CartModel extends ShopModelBase
                 }
             }
         }
-        return $result = array_merge($compareList, $compareListVariations);;
+        if ($compareListVariations && $compareList){
+            return $result = array_merge($compareList, $compareListVariations);
+        }elseif ($compareListVariations){
+            return $compareListVariations;
+        }elseif ($compareList){
+            return $compareList;
+        }
+
     }
 }
