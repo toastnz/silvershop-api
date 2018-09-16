@@ -296,6 +296,16 @@ class ShopAPIController extends Controller
             'data'    => $data
         ];
 
-        return json_encode($response, JSON_HEX_QUOT | JSON_HEX_TAG);
+        // return json_encode($response, JSON_HEX_QUOT | JSON_HEX_TAG);
+        return $this->apiResponse($response);
+    }
+
+    public function apiResponse($data = null)
+    {
+        $this->getResponse()->setBody(json_encode($data));
+
+        $this->getResponse()->addHeader("Content-type", "application/json");
+
+        return $this->getResponse();
     }
 }
