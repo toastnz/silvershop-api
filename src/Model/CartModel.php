@@ -460,7 +460,7 @@ class CartModel extends ShopModelBase
             }
         }
         if ($compareListVariations){
-            foreach ($compareList as $item) {
+            foreach ($compareListVariations as $item) {
                 if (Variation::get()->byID($item)) {
 //                    $compareCount++;
                 }else{
