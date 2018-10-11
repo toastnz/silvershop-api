@@ -92,7 +92,7 @@ class CartModel extends ShopModelBase
         }
 
 
-        if ($this->order) {
+        if ($this->order && $this->order->Items()->Count()) {
 
             $this->extend('updateCartOrder', $this->order);
 
