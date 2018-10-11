@@ -143,7 +143,12 @@ class ShopAPIController extends Controller
         $id = $request->param('ID');
         $item = CompareListItemModel::create($id);
         // process action
-        switch ($request->param('OtherID')) {
+        if ($request->param('OtherID')){
+            $toggle = $request->param('OtherID');
+        }else{
+            $toggle = $request->param('OtherAction');
+        }
+        switch ($toggle) {
             case 'toggle':
                 return $this->processResponse($item->addOrRemoveItems());
             case 'toggleVariation':
