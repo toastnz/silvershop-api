@@ -39,6 +39,9 @@ class CartModel extends ShopModelBase
     protected $compare_list_link;
     protected $compare_list_items = [];
     protected $total_compare_list_items;
+    protected $enquiry_list_link;
+    protected $enquiry_list_items = [];
+    protected $total_enquiry_list_items;
     protected $modifiers = [];
 
     protected static $fields = [
@@ -59,6 +62,9 @@ class CartModel extends ShopModelBase
         'compare_list_link',
         'compare_list_items',
         'total_compare_list_items',
+        'enquiry_list_link',
+        'enquiry_list_items',
+        'total_enquiry_list_items',
         'modifiers',
         'shipping_id',
     ];
@@ -89,6 +95,16 @@ class CartModel extends ShopModelBase
         }else{
             $this->compare_list_items = [];
             $this->total_compare_list_items = Null;
+        }
+
+        if ($this->getEnquiryList()) {
+            foreach ($this->getEnquiryList() as $item) {
+                $this->enquiry_list_items[] = EnquiryListItemModel::create($item)->get();
+            }
+            $this->total_enquiry_list_items = count($this->getEnquiryList());
+        }else{
+            $this->enquiry_list_items = [];
+            $this->total_enquiry_list_items = Null;
         }
 
 
@@ -476,6 +492,94 @@ class CartModel extends ShopModelBase
         }elseif ($compareList){
             return $compareList;
         }
+
+    }
+
+    public function getEnquiryList()
+    {
+//        $this->called_method = 'toggle';
+//        $request = Injector::inst()->get(HTTPRequest::class);
+//        $session = $request->getSession();
+//        $results = new ArrayList();
+//        $compareList = $session->get('enquireList');
+//        $compareListVariations = $session->get('enquireList_variations');
+//
+//        if ($compareList){
+//            foreach ($compareList as $item) {
+//                if (Product::get()->byID($item)) {
+//
+//                }else{
+//
+//                    $key = array_search ($item, $compareList);
+////                Debug::dump($key);
+//                    unset($compareList[$key]);
+//                }
+//            }
+//        }
+//        if ($compareListVariations){
+//            foreach ($compareListVariations as $item) {
+//                if (Variation::get()->byID($item)) {
+////                    $compareCount++;
+//                }else{
+//                    $key = array_search ($item, $compareListVariations);
+//                    unset($compareListVariations[$key]);
+//                }
+//            }
+//        }
+//        if ($compareListVariations && $compareList){
+//            return $result = array_merge($compareList, $compareListVariations);
+//        }elseif ($compareListVariations){
+//            return $compareListVariations;
+//        }elseif ($compareList){
+//            return $compareList;
+//        }
+
+        $request = Injector::inst()->get(HTTPRequest::class);
+        $session = $request->getSession();
+        $name = 'enquireList';
+        $data = $session->get($name);
+        if (!$data) {
+            $data = ArrayList::create([
+                ArrayData::create([
+                    'ID' => 0,
+                    'InternalItemID' => 'No Products'
+                ])
+            ]);
+        }
+
+        if ($data){
+            foreach ($data as $item){
+                $data = json_decode($item);
+                if ($data){
+                    if (isset($data->data->product_id)){
+                        $variationIDs[] = $data->data->id;
+                    }else{
+                        $productIDs[] = $data->data->product_id;
+                    }
+                }
+            }
+        }
+
+
+        if (isset($variationIDs)){
+            $variations = Variation::get()->filter(['ID' => $variationIDs]);
+        }
+
+        if (isset($productIDs)){
+            $products = Product::get()->filter(['ID' => $productIDs]);
+        }
+
+        if (isset($variations) && isset($products)){
+            $data = [];
+        }elseif (isset($variations)){
+            $data = $variations;
+        }elseif (isset($products)){
+            $data = $products;
+        }else{
+            $data = Null;
+        }
+
+        return $data;
 
     }
 }

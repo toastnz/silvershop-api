@@ -9,6 +9,7 @@ use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use Toast\ShopAPI\Model\CartItemModel;
 use Toast\ShopAPI\Model\CartModel;
+use Toast\ShopAPI\Model\EnquiryListItemModel;
 use Toast\ShopAPI\Model\ShopModelBase;
 use Toast\ShopAPI\Model\WishListItemModel;
 use Toast\ShopAPI\Model\CompareListItemModel;
@@ -42,7 +43,8 @@ class ShopAPIController extends Controller
         'shipping',
         'variation',
         'wishlist',
-        'comparelist'
+        'comparelist',
+        'enquirylist'
     ];
 
     public function init()
@@ -142,6 +144,26 @@ class ShopAPIController extends Controller
     {
         $id = $request->param('ID');
         $item = CompareListItemModel::create($id);
+        // process action
+        if ($request->param('OtherID')){
+            $toggle = $request->param('OtherID');
+        }else{
+            $toggle = $request->param('OtherAction');
+        }
+        switch ($toggle) {
+            case 'toggle':
+                return $this->processResponse($item->addOrRemoveItems());
+            case 'toggleVariation':
+                return $this->processResponse($item->addOrRemoveVariations());
+            default:
+                return $this->processResponse($this->cart->get());
+        }
+    }
+
+    public function enquirylist(HTTPRequest $request)
+    {
+        $id = $request->param('ID');
+        $item = EnquiryListItemModel::create($id);
         // process action
         if ($request->param('OtherID')){
             $toggle = $request->param('OtherID');
