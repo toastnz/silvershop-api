@@ -160,7 +160,7 @@ class EnquiryListItemModel extends ProductModel
                 $this->status       = 'success';
                 $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully.');
                 $this->refresh      = [
-                    'enquiryList_variations'
+                    'EnquiryList_variations'
                 ];
             }else{
                 $compareList[] = $this->item->ID;
@@ -169,7 +169,7 @@ class EnquiryListItemModel extends ProductModel
                 $this->status       = 'success';
                 $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully.');
                 $this->refresh      = [
-                    'enquiryList_variations'
+                    'EnquiryList_variations'
                 ];
 
             }
