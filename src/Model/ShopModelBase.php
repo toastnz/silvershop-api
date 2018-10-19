@@ -8,6 +8,7 @@ use SilverShop\Model\Order;
 use SilverShop\Page\CartPage;
 use \WishListPage;
 use \ComparePage;
+use \EnquiryPage;
 use SilverShop\Page\CartPageController;
 use SilverShop\Page\CheckoutPage;
 use SilverShop\Page\CheckoutPageController;

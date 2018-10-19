@@ -3,6 +3,8 @@
 namespace Toast\ShopAPI\Model;
 
 use Exception;
+use HttpRequest;
+use \EnquiryPage;
 use Omnipay\Common\Currency;
 use SilverShop\Model\OrderItem;
 use SilverShop\Model\Variation\Variation;
@@ -10,7 +12,6 @@ use SilverShop\Page\Product;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\ArrayData;
@@ -81,6 +82,7 @@ class EnquiryListItemModel extends ProductModel
         $request = Injector::inst()->get(HTTPRequest::class);
         $session = $request->getSession();
         $compareList = $session->get('enquiryList');
+        $enquiryPage = EnquiryPage::get()->first();
         if ($this->item) {
             // check if item already in wishlist
             if (!$compareList){
@@ -94,7 +96,7 @@ class EnquiryListItemModel extends ProductModel
                 unset($compareList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully.');
+                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink.'">View your enquiry</a>');
                 $this->refresh      = [
                     'enquirylist'
                 ];
@@ -103,7 +105,7 @@ class EnquiryListItemModel extends ProductModel
 
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully.');
+                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink.'">View your enquiry</a>');
                 $this->refresh      = [
                     'enquirylist'
                 ];
@@ -127,7 +129,7 @@ class EnquiryListItemModel extends ProductModel
 
     public function addOrRemoveVariations()
     {
-
+        $enquiryPage = EnquiryPage::get()->first();
         $this->called_method = 'toggle';
         $request = Injector::inst()->get(HTTPRequest::class);
         $session = $request->getSession();
@@ -158,7 +160,7 @@ class EnquiryListItemModel extends ProductModel
                 unset($compareList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully.');
+                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink.'">View your enquiry</a>');
                 $this->refresh      = [
                     'EnquiryList_variations'
                 ];
@@ -167,7 +169,7 @@ class EnquiryListItemModel extends ProductModel
 
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully.');
+                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink.'">View your enquiry</a>');
                 $this->refresh      = [
                     'EnquiryList_variations'
                 ];
