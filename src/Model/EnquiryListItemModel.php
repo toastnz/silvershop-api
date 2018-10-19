@@ -3,8 +3,8 @@
 namespace Toast\ShopAPI\Model;
 
 use Exception;
-use HttpRequest;
 use \EnquiryPage;
+use SilverStripe\Control\HTTPRequest;
 use Omnipay\Common\Currency;
 use SilverShop\Model\OrderItem;
 use SilverShop\Model\Variation\Variation;
@@ -96,7 +96,7 @@ class EnquiryListItemModel extends ProductModel
                 unset($compareList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink.'">View your enquiry</a>');
+                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink().'">View your enquiry</a>');
                 $this->refresh      = [
                     'enquirylist'
                 ];
@@ -105,7 +105,7 @@ class EnquiryListItemModel extends ProductModel
 
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink.'">View your enquiry</a>');
+                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink().'">View your enquiry</a>');
                 $this->refresh      = [
                     'enquirylist'
                 ];
@@ -160,7 +160,7 @@ class EnquiryListItemModel extends ProductModel
                 unset($compareList[$key]);
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink.'">View your enquiry</a>');
+                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemRemoved', 'Item removed from the enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink().'">View your enquiry</a>');
                 $this->refresh      = [
                     'EnquiryList_variations'
                 ];
@@ -169,7 +169,7 @@ class EnquiryListItemModel extends ProductModel
 
                 $this->code         = 200;
                 $this->status       = 'success';
-                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink.'">View your enquiry</a>');
+                $this->message      = _t('SHOP_API_MESSAGES.EnquiryListItemAdded', 'Item added to enquiry list successfully. <br><a href="'.$enquiryPage->AbsoluteLink().'">View your enquiry</a>');
                 $this->refresh      = [
                     'EnquiryList_variations'
                 ];

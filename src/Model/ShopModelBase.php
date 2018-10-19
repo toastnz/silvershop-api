@@ -193,6 +193,13 @@ abstract class ShopModelBase
             }
             $this->compare_list_link = $compareBase;
 
+
+            $compareBase = Controller::join_links(Director::absoluteBaseURL(), CheckoutPageController::config()->url_segment);
+            if ($page = EnquiryPage::get()->first()) {
+                $enquiryBase = $page->AbsoluteLink();
+            }
+            $this->enquiry_list_link = $enquiryBase;
+
         } else {
             user_error('Missing Silvershop module', E_USER_WARNING);
         }
