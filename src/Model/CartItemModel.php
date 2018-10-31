@@ -43,6 +43,7 @@ class CartItemModel extends ShopModelBase
     protected $product_image;
     protected $categories = [];
     protected $variations = [];
+    protected $additional_options = [];
 
     protected static $fields = [
         'item_id',
@@ -63,7 +64,9 @@ class CartItemModel extends ShopModelBase
         'total_price_nice',
         'product_image',
         'categories',
-        'variations'
+        'variations',
+        'additional_options'
+
     ];
 
     public function __construct($id)
@@ -152,6 +155,34 @@ class CartItemModel extends ShopModelBase
                             }
                         }
                     }
+
+                    if ($this->buyable->AdditionalOptions()){
+                        foreach ($this->buyable->AdditionalOptions() as $additionalOption){
+                            $endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/item', $additionalOption->ID);
+//                            $unitValue  = $additionalOption->UnitPrice();
+//                            $totalValue = $additionalOption->Total();
+                            $this->additional_options[] =  [
+                                'item_id' => $additionalOption->ID,
+//                                'product_id' => $additionalOption->buyable->ID,
+                                'title' => $additionalOption->Title,
+                                'description' => Null,
+                                'link' => $additionalOption->AbsoluteLink(),
+                                'add_link' => Controller::join_links($endpoint, 'addOne'),
+                                'add_quantity_link' => Controller::join_links($endpoint, 'addQuantity'),
+                                'remove_link' => Controller::join_links($endpoint, 'removeOne'),
+                                'remove_quantity_link' => Controller::join_links($endpoint, 'removeQuantity'),
+                                'remove_all_link' => Controller::join_links($endpoint, 'removeAll'),
+                                'internal_item_id' => $additionalOption->InternalItemID,
+                                'price' => $additionalOption->price,
+//                                'price_nice' => sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $unitValue),
+                                'total_items' => $additionalOption->Quantity,
+                                'total_price' => $additionalOption->total_price,
+                                'product_image' => ImageModel::create($additionalOption->Image()->ID)->get()
+//                                'total_price_nice' => sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $totalValue)
+                            ];
+                        }
+                    }
+
                 }
             }
         }
