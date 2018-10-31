@@ -43,7 +43,7 @@ class CartItemModel extends ShopModelBase
     protected $product_image;
     protected $categories = [];
     protected $variations = [];
-    protected $additional_options = [];
+    protected $related_products = [];
 
     protected static $fields = [
         'item_id',
@@ -65,7 +65,7 @@ class CartItemModel extends ShopModelBase
         'product_image',
         'categories',
         'variations',
-        'additional_options'
+        'related_products'
 
     ];
 
@@ -156,28 +156,28 @@ class CartItemModel extends ShopModelBase
                         }
                     }
 
-                    if ($this->buyable->AdditionalOptions()){
-                        foreach ($this->buyable->AdditionalOptions() as $additionalOption){
-                            $endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/item', $additionalOption->ID);
+                    if ($this->buyable->RelatedProducts()){
+                        foreach ($this->buyable->RelatedProducts()->limit(5) as $relatedProduct){
+                            $endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/item', $relatedProduct->ID);
 //                            $unitValue  = $additionalOption->UnitPrice();
 //                            $totalValue = $additionalOption->Total();
-                            $this->additional_options[] =  [
-                                'item_id' => $additionalOption->ID,
+                            $this->related_products[] =  [
+                                'item_id' => $relatedProduct->ID,
 //                                'product_id' => $additionalOption->buyable->ID,
-                                'title' => $additionalOption->Title,
+                                'title' => $relatedProduct->Title,
                                 'description' => Null,
-                                'link' => $additionalOption->AbsoluteLink(),
+                                'link' => $relatedProduct->AbsoluteLink(),
                                 'add_link' => Controller::join_links($endpoint, 'addOne'),
                                 'add_quantity_link' => Controller::join_links($endpoint, 'addQuantity'),
                                 'remove_link' => Controller::join_links($endpoint, 'removeOne'),
                                 'remove_quantity_link' => Controller::join_links($endpoint, 'removeQuantity'),
                                 'remove_all_link' => Controller::join_links($endpoint, 'removeAll'),
-                                'internal_item_id' => $additionalOption->InternalItemID,
-                                'price' => $additionalOption->price,
+                                'internal_item_id' => $relatedProduct->InternalItemID,
+                                'price' => $relatedProduct->price,
 //                                'price_nice' => sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $unitValue),
-                                'total_items' => $additionalOption->Quantity,
-                                'total_price' => $additionalOption->total_price,
-                                'product_image' => ImageModel::create($additionalOption->Image()->ID)->get()
+                                'total_items' => $relatedProduct->Quantity,
+                                'total_price' => $relatedProduct->total_price,
+                                'product_image' => ImageModel::create($relatedProduct->Image()->ID)->get()
 //                                'total_price_nice' => sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $totalValue)
                             ];
                         }
