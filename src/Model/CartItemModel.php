@@ -158,7 +158,7 @@ class CartItemModel extends ShopModelBase
 
                     if ($this->buyable->RelatedProducts()){
                         foreach ($this->buyable->RelatedProducts()->limit(5) as $relatedProduct){
-                            $endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/item', $relatedProduct->ID);
+                            $endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/product', $relatedProduct->ID);
 //                            $unitValue  = $additionalOption->UnitPrice();
 //                            $totalValue = $additionalOption->Total();
                             $this->related_products[] =  [
@@ -167,7 +167,7 @@ class CartItemModel extends ShopModelBase
                                 'title' => $relatedProduct->Title,
                                 'description' => Null,
                                 'link' => $relatedProduct->AbsoluteLink(),
-                                'add_link' => Controller::join_links($endpoint, 'addOne'),
+                                'add_link' => Controller::join_links($endpoint, 'add'),
                                 'add_quantity_link' => Controller::join_links($endpoint, 'addQuantity'),
                                 'remove_link' => Controller::join_links($endpoint, 'removeOne'),
                                 'remove_quantity_link' => Controller::join_links($endpoint, 'removeQuantity'),
