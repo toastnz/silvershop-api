@@ -156,7 +156,7 @@ class CartItemModel extends ShopModelBase
                         }
                     }
 
-                    if ($this->buyable->RelatedProducts()){
+                    if (isset($this->buyable->RelatedProducts() && $this->buyable->RelatedProducts())){
                         foreach ($this->buyable->RelatedProducts()->limit(5) as $relatedProduct){
                             $endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/product', $relatedProduct->ID);
 //                            $unitValue  = $additionalOption->UnitPrice();
