@@ -453,7 +453,37 @@ class CartModel extends ShopModelBase
         $request = Injector::inst()->get(HTTPRequest::class);
         $session = $request->getSession();
         $wishList = $session->get('wishList');
-        return $wishList;
+
+        $wishListVariations = $session->get('wishList_variations');
+        if ($wishList){
+            foreach ($wishList as $item) {
+                if (Product::get()->byID($item)) {
+
+                }else{
+
+                    $key = array_search ($item, $wishList);
+//                Debug::dump($key);
+                    unset($wishList[$key]);
+                }
+            }
+        }
+        if ($wishListVariations){
+            foreach ($wishListVariations as $item) {
+                if (Variation::get()->byID($item)) {
+//                    $compareCount++;
+                }else{
+                    $key = array_search ($item, $wishListVariations);
+                    unset($wishListVariations[$key]);
+                }
+            }
+        }
+        if ($wishListVariations && $wishList){
+            return $result = array_merge($wishList, $wishListVariations);
+        }elseif ($wishListVariations){
+            return $wishListVariations;
+        }elseif ($wishList){
+            return $wishList;
+        }
     }
 
     public function getCompareList()
