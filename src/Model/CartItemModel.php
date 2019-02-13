@@ -155,31 +155,32 @@ class CartItemModel extends ShopModelBase
                             }
                         }
                     }
-
-                    if ($this->buyable->RelatedProducts()){
-                        foreach ($this->buyable->RelatedProducts()->limit(5) as $relatedProduct){
-                            $endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/product', $relatedProduct->ID);
-//                            $unitValue  = $additionalOption->UnitPrice();
-//                            $totalValue = $additionalOption->Total();
-                            $this->related_products[] =  [
-                                'item_id' => $relatedProduct->ID,
-//                                'product_id' => $additionalOption->buyable->ID,
-                                'title' => $relatedProduct->Title,
-                                'description' => Null,
-                                'link' => $relatedProduct->AbsoluteLink(),
-                                'add_link' => Controller::join_links($endpoint, 'add'),
-                                'add_quantity_link' => Controller::join_links($endpoint, 'addQuantity'),
-                                'remove_link' => Controller::join_links($endpoint, 'removeOne'),
-                                'remove_quantity_link' => Controller::join_links($endpoint, 'removeQuantity'),
-                                'remove_all_link' => Controller::join_links($endpoint, 'removeAll'),
-                                'internal_item_id' => $relatedProduct->InternalItemID,
-                                'price' => $relatedProduct->price,
-//                                'price_nice' => sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $unitValue),
-                                'total_items' => $relatedProduct->Quantity,
-                                'total_price' => $relatedProduct->total_price,
-                                'product_image' => ImageModel::create($relatedProduct->Image()->ID)->get()
-//                                'total_price_nice' => sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $totalValue)
-                            ];
+                    if ($this->buyable->ClassName == Product::class){
+                        if ($this->buyable->RelatedProducts()){
+                            foreach ($this->buyable->RelatedProducts()->limit(5) as $relatedProduct){
+                                $endpoint = Controller::join_links(Director::absoluteBaseURL(), 'shop-api/cart/product', $relatedProduct->ID);
+    //                            $unitValue  = $additionalOption->UnitPrice();
+    //                            $totalValue = $additionalOption->Total();
+                                $this->related_products[] =  [
+                                    'item_id' => $relatedProduct->ID,
+    //                                'product_id' => $additionalOption->buyable->ID,
+                                    'title' => $relatedProduct->Title,
+                                    'description' => Null,
+                                    'link' => $relatedProduct->AbsoluteLink(),
+                                    'add_link' => Controller::join_links($endpoint, 'add'),
+                                    'add_quantity_link' => Controller::join_links($endpoint, 'addQuantity'),
+                                    'remove_link' => Controller::join_links($endpoint, 'removeOne'),
+                                    'remove_quantity_link' => Controller::join_links($endpoint, 'removeQuantity'),
+                                    'remove_all_link' => Controller::join_links($endpoint, 'removeAll'),
+                                    'internal_item_id' => $relatedProduct->InternalItemID,
+                                    'price' => $relatedProduct->price,
+    //                                'price_nice' => sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $unitValue),
+                                    'total_items' => $relatedProduct->Quantity,
+                                    'total_price' => $relatedProduct->total_price,
+                                    'product_image' => ImageModel::create($relatedProduct->Image()->ID)->get()
+    //                                'total_price_nice' => sprintf('%s%.2f', Config::inst()->get(Currency::class, 'currency_symbol'), $totalValue)
+                                ];
+                            }
                         }
                     }
 
