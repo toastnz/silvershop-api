@@ -189,4 +189,58 @@ class WishListItemModel extends ProductModel
         return $this->getActionResponse();
     }
 
+    public function addOrRemoveVariations()
+    {
+        $this->called_method = 'toggle';
+
+        $request  = Injector::inst()->get(HTTPRequest::class);
+        $session  = $request->getSession();
+        $id = $request->param('ID');
+        $wishList = $session->get('wishList_variations');
+        $this->item = Variation::get_by_id(Variation::class, $id);
+
+        if ($this->item) {
+            // check if item already in wishlist
+            if (!$wishList) {
+                $session->set('wishList_variations', []);
+                $wishList = $session->get('wishList_variations');
+            }
+
+            // if already exists remove it
+            if (in_array($this->item->ID, $wishList)) {
+                $key = array_search($this->item->ID, $wishList);
+                unset($wishList[$key]);
+                $this->code    = 200;
+                $this->status  = 'success';
+                $this->message = _t('SHOP_API_MESSAGES.WishListItemRemoved', 'Item removed to wishlist successfully.');
+                $this->refresh = [
+                    'wishlist_variations'
+                ];
+            } else {
+                $wishList[] = $this->item->ID;
+
+                $this->code    = 200;
+                $this->status  = 'success';
+                $this->message = _t('SHOP_API_MESSAGES.WishListItemAdded', 'Item added to wishlist successfully.');
+                $this->refresh = [
+                    'wishlist_variations'
+                ];
+
+            }
+
+            $wishList = array_unique($wishList);
+            $session->set('wishList_variations', $wishList);
+
+
+        } else {
+            $this->code    = 404;
+            $this->status  = 'error';
+            $this->message = _t('SHOP_API_MESSAGES.ProductNotFound', 'Product does not exist');
+        }
+
+        $this->extend('onAddOrRemoveItems');
+
+        return $this->getActionResponse();
+    }
+
 }

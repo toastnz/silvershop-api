@@ -133,6 +133,8 @@ class ShopAPIController extends Controller
         switch ($action) {
             case 'toggle':
                 return $this->processResponse($item->addOrRemoveItems());
+            case 'toggleVariation':
+                return $this->processResponse($item->addOrRemoveVariations());
             case 'move':
                 return $this->processResponse($item->move());
             default:
